@@ -1,0 +1,1 @@
+[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"dossier":["adresse","mail","ville"]}},{"model":{"test":[]}},{"model":{"blabla":[]}}]
