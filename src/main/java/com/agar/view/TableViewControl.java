@@ -11,7 +11,10 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by SDEV2 on 29/06/2016.
@@ -19,6 +22,8 @@ import java.util.List;
 public class TableViewControl extends TableView<String> implements Subscriber
 {
     private List<ModelImport> listModelImport;
+    private String modelImportJsonFileName;
+    private String constraintJsonFileName;
     /**
      *
      * @param modelImportJsonFileName
@@ -27,10 +32,12 @@ public class TableViewControl extends TableView<String> implements Subscriber
      */
     public TableViewControl(String modelImportJsonFileName,String constraintJsonFileName, String modelImportName)
     {
+        this.modelImportJsonFileName = Objects.requireNonNull(modelImportJsonFileName, "The Json file name can't be null");
+        this.constraintJsonFileName = Objects.requireNonNull(constraintJsonFileName, "The Json file name can't be null");
         this.setEditable(true);
         if( modelImportName == null)
             this.setVisible(false);
-        init(modelImportJsonFileName, constraintJsonFileName, modelImportName);
+        init(this.modelImportJsonFileName, this.constraintJsonFileName, modelImportName);
     }
 
     public void init(String modelImportJsonFileName,String constraintJsonFileName, String modelImportName)
@@ -39,7 +46,11 @@ public class TableViewControl extends TableView<String> implements Subscriber
         fieldColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
         this.getColumns().add(fieldColumn);
 
-        listModelImport = JsonModelImport.getModelImports(modelImportJsonFileName);
+        try {
+            listModelImport = JsonModelImport.getModelImports(modelImportJsonFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setItems(modelImportName);
         List<Constraint> listConstraint = JsonConstraint.getConstraints(constraintJsonFileName);
         TableColumn<String, Boolean> constraintColumn;

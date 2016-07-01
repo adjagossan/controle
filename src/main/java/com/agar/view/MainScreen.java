@@ -24,7 +24,7 @@ public class MainScreen extends Application {
 
         SplitPaneModelImport splitPaneModelImport = new SplitPaneModelImport(Utils.modelImportJsonFileName);
         tabImport.setContent(splitPaneModelImport);
-        TableViewControl tableViewControl = new TableViewControl("model-import.json","constraint.json", (String)splitPaneModelImport.getListViewComponent().getValue()/*"patient"*/);
+        TableViewControl tableViewControl = new TableViewControl(Utils.modelImportJsonFileName,Utils.constraintJsonFileName, (String)splitPaneModelImport.getListViewComponent().getValue()/*"patient"*/);
         tabControl.setContent(tableViewControl);
         splitPaneModelImport.getListViewComponent().register(tableViewControl);
 

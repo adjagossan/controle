@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -21,32 +22,34 @@ public class JsonModelImport {
      * @param JsonFileName
      * @return
      */
-    public static List<ModelImport> getModelImports(String JsonFileName)
-    {
+    public static List<ModelImport> getModelImports(String JsonFileName) throws IOException {
         BufferedReader reader;
         String content = "";
         List<ModelImport> modelImportList = new ArrayList<>();
         Gson gson = new Gson();
         try
         {
-            reader = new BufferedReader(new FileReader(JsonFileName));
-            String line;
-            while ((line = reader.readLine()) != null)
-                content += line;
-            reader.close();
-
-            if(!content.contentEquals(""))
-                modelImportList = new ArrayList<>(Arrays.asList(gson.fromJson(content, ModelImport[].class)));
+            reader = new BufferedReader(new FileReader(Objects.requireNonNull(JsonFileName, "the Json file name can't be null")));
+            try
+            {
+                String line;
+                while ((line = reader.readLine()) != null)
+                    content += line;
+                if(!content.contentEquals(""))
+                    modelImportList = new ArrayList<>(Arrays.asList(gson.fromJson(content, ModelImport[].class)));
+            }finally{
+                if(reader != null) reader.close();
+            }
         }
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
-            return null;
+            throw e;
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return null;
+            throw e;
         }
         return modelImportList;
     }
@@ -58,38 +61,40 @@ public class JsonModelImport {
      * @param field
      * @return
      */
-    public static boolean addModelImport(String JsonFileName, String modelImportName, String field)
-    {
-        //BufferedReader reader;
-        BufferedWriter writer;
-        //String content = "";
+    public static boolean addModelImport(String JsonFileName, String modelImportName, String field) throws IOException {
+        BufferedWriter writer = null;
         List<ModelImport> modelImportList/* = new ArrayList<>()*/;
         Gson gson = new Gson();
 
-        try
-        {
+        try {
             modelImportList = getModelImports(JsonFileName);
 
-            if(modelImportName != null)
-            {
+            if(modelImportName != null) {
                 if(!containsModel(modelImportList, modelImportName, null))
                     modelImportList.add(new ModelImport(modelImportName));
                 if(field != null)
                     containsModel(modelImportList, modelImportName, field);
             }
 
-            writer = new BufferedWriter(new FileWriter(JsonFileName));
-            writer.write(gson.toJson(modelImportList));
-            writer.close();
+            try {
+                writer = new BufferedWriter(new FileWriter(JsonFileName));
+                writer.write(gson.toJson(modelImportList));
+            }
+            finally{
+                if(writer != null) writer.close();
+            }
+
             return true;
         }
         catch(FileNotFoundException e) {
             //logger.error(e.getMessage());
-            return false;
+            e.printStackTrace();
+            throw e;
         }
         catch (IOException e) {
             //logger.error(e.getMessage());
-            return false;
+            e.printStackTrace();
+            throw e;
         }
     }
 

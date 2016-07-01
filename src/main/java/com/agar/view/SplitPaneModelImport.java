@@ -2,10 +2,13 @@ package com.agar.view;
 
 import com.agar.data.JsonModelImport;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 /**
  * Created by SDEV2 on 28/06/2016.
@@ -17,7 +20,12 @@ public class SplitPaneModelImport extends SplitPane
     public SplitPaneModelImport(String JsonFileName)
     {
         VBox vBox = new VBox();
-        listViewModelImport = new ListViewModelImport(JsonFileName);
+        try {
+            listViewModelImport = new ListViewModelImport(JsonFileName);
+        } catch (IOException e) {
+            //e.printStackTrace();
+            this.getItems().addAll(new Label("Une erreur est survenue, fichier de configuration inexistant"));
+        }
         HBox hBox = new HBox();
         TextField newModel = new TextField();
         newModel.setPromptText("Inserez le nouveau model");
@@ -25,8 +33,12 @@ public class SplitPaneModelImport extends SplitPane
         hBox.getChildren().addAll(newModel, addModelImportBTN);
 
         addModelImportBTN.setOnAction(event -> {
-            if(JsonModelImport.addModelImport(JsonFileName, newModel.getText(), null))
-                listViewModelImport.addItem(newModel.getText());
+            try {
+                if(JsonModelImport.addModelImport(JsonFileName, newModel.getText(), null))
+                    listViewModelImport.addItem(newModel.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
         vBox.getChildren().addAll(listViewModelImport,  hBox);

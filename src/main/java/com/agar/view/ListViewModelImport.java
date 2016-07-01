@@ -8,31 +8,34 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by SDEV2 on 28/06/2016.
  */
 public class ListViewModelImport extends ListView<String> implements Subject {
 
-    private Map<String, ObservableValue<Boolean>> map = new HashMap<>();
+    private Map<String, ObservableValue<Boolean>> map = new /*HashMap*/TreeMap<>();
     private String selectedModel = null;
     private List<Subscriber> subscribers = new ArrayList<>();
 
-    public ListViewModelImport(String JsonFileName) {
+    public ListViewModelImport(String JsonFileName) throws IOException {
             this.setEditable(true);
             this.setPrefSize(200, 300);
             init(JsonFileName);
     }
 
-    public void init(String JsonFileName)
-    {
-        for(ModelImport modelImport : JsonModelImport.getModelImports(JsonFileName)) {
-            for(String modelName : modelImport.getModel().keySet())
-                map.put(modelName, new SimpleBooleanProperty(false));
+    public void init(String JsonFileName) throws IOException {
+        try {
+            for(ModelImport modelImport : JsonModelImport.getModelImports(JsonFileName)) {
+                for(String modelName : modelImport.getModel().keySet())
+                    map.put(modelName, new SimpleBooleanProperty(false));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
         }
         refresh();
         this.getItems().addAll(map.keySet());
