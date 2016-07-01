@@ -23,7 +23,6 @@ public class SplitPaneModelImport extends SplitPane
             listViewModelImport = new ListViewModelImport(JsonFileName);
         } catch (IOException e) {
             e.printStackTrace();
-            //this.getItems().addAll(new Label("Une erreur est survenue, fichier de configuration inexistant"));
             throw e;
         }
         HBox hBox = new HBox();
