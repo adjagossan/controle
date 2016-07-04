@@ -25,7 +25,7 @@ public class JsonModelImportTest
         for(String modelImport: modelImports) {
                 modelFields.get(i).forEach(s -> {
                     try {
-                        Assert.assertTrue(JsonModelImport.addModelImport(Utils.modelImportJsonFileName, modelImport, s/*field*/));
+                        Assert.assertTrue(JsonModelImport.getInstance().addModelImport(Utils.modelImportJsonFileName, modelImport, s/*field*/));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -37,7 +37,7 @@ public class JsonModelImportTest
     //@Test
     public void getModelImportTest(){
         try {
-            JsonModelImport.getModelImports("model-impor.json");
+            JsonModelImport.getInstance().getInstance().getModelImports("model-impor.json");
         } catch (IOException e) {
             e.printStackTrace();
         }

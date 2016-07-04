@@ -1,8 +1,8 @@
 package com.agar.view;
 
 import com.agar.data.JsonModelImport;
+import com.agar.view.alert.ExceptionHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -20,7 +20,7 @@ public class SplitPaneModelImport extends SplitPane
     public SplitPaneModelImport(String JsonFileName) throws IOException {
         VBox vBox = new VBox();
         try {
-            listViewModelImport = new ListViewModelImport(JsonFileName);
+            listViewModelImport = /*new*/ ListViewModelImport.getInstance(JsonFileName);
         } catch (IOException e) {
             e.printStackTrace();
             throw e;
@@ -33,10 +33,11 @@ public class SplitPaneModelImport extends SplitPane
 
         addModelImportBTN.setOnAction(event -> {
             try {
-                if(JsonModelImport.addModelImport(JsonFileName, newModel.getText(), null))
+                if(JsonModelImport.getInstance().addModelImport(JsonFileName, newModel.getText(), null))
                     listViewModelImport.addItem(newModel.getText());
             } catch (IOException e) {
                 e.printStackTrace();
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
         });
 

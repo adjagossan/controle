@@ -1,6 +1,10 @@
 package com.agar.data;
 
+import com.agar.Subject;
+import com.agar.Subscriber;
 import com.agar.model.ModelImport;
+import com.agar.view.ListViewModelImport;
+import com.agar.view.alert.ExceptionHandler;
 import com.google.gson.Gson;
 //import org.apache.logging.log4j.LogManager;
 
@@ -14,15 +18,24 @@ import java.util.logging.Logger;
 /**
  * Created by SDEV2 on 27/06/2016.
  */
-public class JsonModelImport {
+public class JsonModelImport implements Subject{
     //private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(JsonModelImport.class);
+    private List<Subscriber> subscribers = new ArrayList<>();
+    private String selectedModel;
+    private static JsonModelImport jsonModelImport = new JsonModelImport();
 
+    private JsonModelImport(){}
+
+    public static JsonModelImport getInstance(){
+        if(jsonModelImport == null)
+            jsonModelImport = new JsonModelImport();
+        return jsonModelImport;
+    }
     /**
-     *
      * @param JsonFileName
      * @return
      */
-    public static List<ModelImport> getModelImports(String JsonFileName) throws IOException {
+    public List<ModelImport> getModelImports(String JsonFileName) throws IOException {
         BufferedReader reader;
         String content = "";
         List<ModelImport> modelImportList = new ArrayList<>();
@@ -61,7 +74,9 @@ public class JsonModelImport {
      * @param field
      * @return
      */
-    public static boolean addModelImport(String JsonFileName, String modelImportName, String field) throws IOException {
+    public boolean addModelImport(String JsonFileName, String modelImportName, String field) throws IOException {
+        String modelImport = null;
+        if(modelImportName != null) modelImport = modelImportName.trim();
         BufferedWriter writer = null;
         List<ModelImport> modelImportList/* = new ArrayList<>()*/;
         Gson gson = new Gson();
@@ -69,11 +84,11 @@ public class JsonModelImport {
         try {
             modelImportList = getModelImports(JsonFileName);
 
-            if(modelImportName != null) {
-                if(!containsModel(modelImportList, modelImportName, null))
-                    modelImportList.add(new ModelImport(modelImportName));
+            if(modelImport != null) {
+                if(!containsModel(modelImportList, modelImport, null))
+                    modelImportList.add(new ModelImport(modelImport));
                 if(field != null)
-                    containsModel(modelImportList, modelImportName, field);
+                    containsModel(modelImportList, modelImport, field);
             }
 
             try {
@@ -83,8 +98,6 @@ public class JsonModelImport {
             finally{
                 if(writer != null) writer.close();
             }
-
-            return true;
         }
         catch(FileNotFoundException e) {
             //logger.error(e.getMessage());
@@ -96,9 +109,15 @@ public class JsonModelImport {
             e.printStackTrace();
             throw e;
         }
+        /*
+        TODO
+        if(isAttached(ListViewModelImport.getInstance()))
+        */
+        setValue(modelImportName);
+        return true;
     }
 
-    private static boolean containsModel(List<ModelImport> modelImportList, String modelImportName, String field)
+    private boolean containsModel(List<ModelImport> modelImportList, String modelImportName, String field)
     {
         boolean found = false;
         if(modelImportList !=null && !modelImportList.isEmpty()&& modelImportName != null)
@@ -116,5 +135,43 @@ public class JsonModelImport {
             }
         }
         return found;
+    }
+
+    @Override
+    public void register(Subscriber subscriber) {
+        if(!subscribers.contains(subscriber))subscribers.add(subscriber);
+    }
+
+    @Override
+    public void unregister(Subscriber subscriber) {
+        if(subscribers.contains(subscriber))subscribers.remove(subscriber);
+    }
+
+    @Override
+    public boolean isAttached(Subscriber subscriber) {
+        return subscribers.contains(subscriber);
+    }
+
+    @Override
+    public void notifySubscribers() {
+        subscribers.forEach(subscriber -> {
+            try {
+                subscriber.update(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+            }
+        });
+    }
+
+    @Override
+    public void setValue(Object object) {
+        selectedModel = (String)object;
+        notifySubscribers();
+    }
+
+    @Override
+    public Object getValue() {
+        return this.selectedModel;
     }
 }

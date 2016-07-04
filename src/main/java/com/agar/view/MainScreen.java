@@ -1,9 +1,9 @@
 package com.agar.view;
 
 import com.agar.utils.Utils;
+import com.agar.view.alert.ExceptionHandler;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -28,22 +28,18 @@ public class MainScreen extends Application {
         SplitPaneModelImport splitPaneModelImport = null;
         try {
             splitPaneModelImport = new SplitPaneModelImport(Utils.modelImportJsonFileName);
+            tabImport.setContent(splitPaneModelImport);
+            TableViewControl tableViewControl = new TableViewControl(Utils.modelImportJsonFileName,Utils.constraintJsonFileName, (String)splitPaneModelImport.getListViewComponent().getValue()/*"patient"*/);
+            tabControl.setContent(tableViewControl);
+            splitPaneModelImport.getListViewComponent().register(tableViewControl);
         } catch (IOException e){
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("");
-            alert.setHeaderText("");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
         }
-        tabImport.setContent(splitPaneModelImport);
-        TableViewControl tableViewControl = new TableViewControl(Utils.modelImportJsonFileName,Utils.constraintJsonFileName, (String)splitPaneModelImport.getListViewComponent().getValue()/*"patient"*/);
-        tabControl.setContent(tableViewControl);
-        splitPaneModelImport.getListViewComponent().register(tableViewControl);
-
-        Scene scene = new Scene(tabPane);
-        stage.setScene(scene);
-        stage.show();
+        finally{
+            Scene scene = new Scene(tabPane, 500, 500);
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     public static void main(String[] args){

@@ -7,6 +7,7 @@ public interface Subject
 {
     void register(Subscriber subscriber);
     void unregister(Subscriber subscriber);
+    boolean isAttached(Subscriber subscriber);
     void notifySubscribers();
     void setValue(Object object);
     Object getValue();
