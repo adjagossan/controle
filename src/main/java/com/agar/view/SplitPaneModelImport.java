@@ -1,6 +1,7 @@
 package com.agar.view;
 
 import com.agar.data.JsonModelImport;
+import com.agar.view.alert.ExceptionHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -37,6 +38,7 @@ public class SplitPaneModelImport extends SplitPane
                     listViewModelImport.addItem(newModel.getText());
             } catch (IOException e) {
                 e.printStackTrace();
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
         });
 

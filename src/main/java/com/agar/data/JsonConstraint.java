@@ -4,7 +4,6 @@ import com.agar.model.Constraint;
 import com.google.gson.Gson;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,14 +15,12 @@ import java.util.List;
 public class JsonConstraint
 {
    // private static Logger logger = LogManager.getLogger(JsonConstraint.class);
-
     /**
      *
      * @param JsonFileName
      * @return
      */
-    public static List<Constraint> getConstraints(String JsonFileName)
-    {
+    public static List<Constraint> getConstraints(String JsonFileName) throws IOException {
         BufferedReader reader;
         String content = "";
         List<Constraint> constraintList = new ArrayList<>();
@@ -38,11 +35,11 @@ public class JsonConstraint
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return null;
+            throw e;
         }
         catch (IOException e) {
             e.printStackTrace();
-            return null;
+            throw e;
         }
 
         if(!content.contentEquals(""))
@@ -56,8 +53,7 @@ public class JsonConstraint
      * @param constraint   a constaint
      * @return boolean
      */
-    public static boolean addConstraint(String JsonFileName, String constraint)
-    {
+    public static boolean addConstraint(String JsonFileName, String constraint) throws IOException {
         constraint = constraint.trim();
         BufferedWriter writer;
         List<Constraint> constraintList;
@@ -70,28 +66,19 @@ public class JsonConstraint
             writer = new BufferedWriter(new FileWriter(JsonFileName));
             writer.write(gson.toJson(constraintList));
             writer.close();
-            return true;
         }
         catch(FileNotFoundException e)
         {
             //logger.error(e.getMessage());
-            return false;
+            e.printStackTrace();
+            throw e;
         }
         catch (IOException e)
         {
             //logger.error(e.getMessage());
-            return false;
+            e.printStackTrace();
+            throw e;
         }
-    }
-
-    /**
-     *
-     * @param JsonFileName
-     * @param constraint
-     * @return
-     */
-    public static boolean updateConstraint(String JsonFileName, String constraint){
-
         return true;
     }
 }

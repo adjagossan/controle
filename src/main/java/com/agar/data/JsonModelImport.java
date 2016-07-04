@@ -16,7 +16,6 @@ import java.util.logging.Logger;
  */
 public class JsonModelImport {
     //private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(JsonModelImport.class);
-
     /**
      *
      * @param JsonFileName
@@ -62,6 +61,8 @@ public class JsonModelImport {
      * @return
      */
     public static boolean addModelImport(String JsonFileName, String modelImportName, String field) throws IOException {
+        String modelImport = null;
+        if(modelImportName != null) modelImport = modelImportName.trim();
         BufferedWriter writer = null;
         List<ModelImport> modelImportList/* = new ArrayList<>()*/;
         Gson gson = new Gson();
@@ -69,11 +70,11 @@ public class JsonModelImport {
         try {
             modelImportList = getModelImports(JsonFileName);
 
-            if(modelImportName != null) {
-                if(!containsModel(modelImportList, modelImportName, null))
-                    modelImportList.add(new ModelImport(modelImportName));
+            if(modelImport != null) {
+                if(!containsModel(modelImportList, modelImport, null))
+                    modelImportList.add(new ModelImport(modelImport));
                 if(field != null)
-                    containsModel(modelImportList, modelImportName, field);
+                    containsModel(modelImportList, modelImport, field);
             }
 
             try {
@@ -83,8 +84,6 @@ public class JsonModelImport {
             finally{
                 if(writer != null) writer.close();
             }
-
-            return true;
         }
         catch(FileNotFoundException e) {
             //logger.error(e.getMessage());
@@ -96,6 +95,7 @@ public class JsonModelImport {
             e.printStackTrace();
             throw e;
         }
+        return true;
     }
 
     private static boolean containsModel(List<ModelImport> modelImportList, String modelImportName, String field)
