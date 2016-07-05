@@ -55,6 +55,7 @@ public class TableViewControl extends TableView<String> implements Subscriber
         this.listModelImport = JsonModelImport.getInstance().getModelImports(modelImportJsonFileName);
         this.listConstraint = JsonConstraint.getConstraints(constraintJsonFileName);
     }
+
     /**
      *
      */
@@ -83,7 +84,7 @@ public class TableViewControl extends TableView<String> implements Subscriber
         if(modelImportName != null)
         {
             loadData(this.modelImportJsonFileName, this.constraintJsonFileName);
-            clear();
+
             boolean modelImportNameFound = false;
             for (ModelImport modelImport : listModelImport) {
                 for (String key : modelImport.getModel().keySet()) {
@@ -129,7 +130,4 @@ public class TableViewControl extends TableView<String> implements Subscriber
         this.getColumns().clear();
     }
 
-    public void check(){
-        //map.forEach((s, observableValues) -> );
-    }
 }
