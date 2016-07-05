@@ -84,7 +84,7 @@ public class TableViewControl extends TableView<String> implements Subscriber
         if(modelImportName != null)
         {
             loadData(this.modelImportJsonFileName, this.constraintJsonFileName);
-
+            clear();
             boolean modelImportNameFound = false;
             for (ModelImport modelImport : listModelImport) {
                 for (String key : modelImport.getModel().keySet()) {

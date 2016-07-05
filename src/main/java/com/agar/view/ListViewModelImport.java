@@ -92,7 +92,7 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         });
         contextMenu.getItems().add(addField);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            if(event.getButton().equals(MouseButton.SECONDARY)) contextMenu.show(this, event.getScreenX(), event.getScreenY());
+            if(event.getButton().equals(MouseButton.SECONDARY) && !this.getSelectionModel().isEmpty()) contextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
     }
 
