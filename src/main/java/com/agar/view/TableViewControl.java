@@ -1,11 +1,13 @@
 package com.agar.view;
 
+import com.agar.Invoker;
 import com.agar.Subject;
 import com.agar.Subscriber;
 import com.agar.data.JsonConstraint;
 import com.agar.data.JsonModelImport;
 import com.agar.model.Constraint;
 import com.agar.model.ModelImport;
+import com.agar.utils.Utils;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -26,8 +28,8 @@ public class TableViewControl extends TableView<String> implements Subscriber
     private Map<String, List<ObservableValue<Boolean>>> map = new HashMap<>();
     private List<Constraint> listConstraint;
     private TableColumn<String, Boolean> constraintColumn;
+
     /**
-     *
      * @param modelImportJsonFileName
      * @param constraintJsonFileName
      * @param modelImportName
@@ -42,7 +44,6 @@ public class TableViewControl extends TableView<String> implements Subscriber
     }
 
     /**
-     *
      * @param modelImportName
      * @throws IOException
      */
@@ -53,7 +54,8 @@ public class TableViewControl extends TableView<String> implements Subscriber
 
     public void loadData(String modelImportJsonFileName,String constraintJsonFileName) throws IOException {
         this.listModelImport = JsonModelImport.getInstance().getModelImports(modelImportJsonFileName);
-        this.listConstraint = JsonConstraint.getConstraints(constraintJsonFileName);
+        this.listConstraint = JsonConstraint.getInstance().getConstraints(constraintJsonFileName);
+        //Invoker.getInstance().invoke(Utils.Cmd.GET_MODEL_IMPORT);
     }
 
     /**

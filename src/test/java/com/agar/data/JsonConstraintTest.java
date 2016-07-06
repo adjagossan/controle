@@ -14,7 +14,7 @@ public class JsonConstraintTest {
     public void addConstraint(){
         for(String constraint: new String[]{"champ non vide", "champ numerique"})
             try {
-                Assert.assertTrue(JsonConstraint.addConstraint("constraint.json", constraint));
+                Assert.assertTrue(JsonConstraint.getInstance().addConstraint("constraint.json", constraint));
             } catch (IOException e) {
                 e.printStackTrace();
             }

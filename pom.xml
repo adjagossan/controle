@@ -27,6 +27,7 @@
       <version>2.7</version>
       <scope>compile</scope>
     </dependency>
+      <!--https://wiki.jasig.org/pages/viewpage.action?pageId=57578731-->
      <!-- <dependency>
           <groupId>org.apache.logging.log4j</groupId>
           <artifactId>log4j-api</artifactId>

@@ -27,8 +27,6 @@ public class JsonModelImport implements Subject{
     private JsonModelImport(){}
 
     public static JsonModelImport getInstance(){
-        if(jsonModelImport == null)
-            jsonModelImport = new JsonModelImport();
         return jsonModelImport;
     }
     /**

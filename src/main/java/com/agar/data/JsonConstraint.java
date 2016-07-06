@@ -15,12 +15,19 @@ import java.util.List;
 public class JsonConstraint
 {
    // private static Logger logger = LogManager.getLogger(JsonConstraint.class);
+    private static JsonConstraint jsonConstraint = new JsonConstraint();
+
+    private JsonConstraint(){}
+
+    public static JsonConstraint getInstance(){
+       return jsonConstraint;
+    }
     /**
      *
      * @param JsonFileName
      * @return
      */
-    public static List<Constraint> getConstraints(String JsonFileName) throws IOException {
+    public List<Constraint> getConstraints(String JsonFileName) throws IOException {
         BufferedReader reader;
         String content = "";
         List<Constraint> constraintList = new ArrayList<>();
@@ -53,7 +60,7 @@ public class JsonConstraint
      * @param constraint   a constaint
      * @return boolean
      */
-    public static boolean addConstraint(String JsonFileName, String constraint) throws IOException {
+    public boolean addConstraint(String JsonFileName, String constraint) throws IOException {
         constraint = constraint.trim();
         BufferedWriter writer;
         List<Constraint> constraintList;

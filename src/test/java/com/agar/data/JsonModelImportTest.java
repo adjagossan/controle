@@ -34,12 +34,17 @@ public class JsonModelImportTest
         }
     }
 
-    //@Test
+    @Test
     public void getModelImportTest(){
         try {
-            JsonModelImport.getInstance().getInstance().getModelImports("model-impor.json");
+            JsonModelImport.getInstance().getInstance().getModelImports("model-import.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void getUserHomeDirectory(){
+        System.out.println(System.getProperty("user.home"));
     }
 }
