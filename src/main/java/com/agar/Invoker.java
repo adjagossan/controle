@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class Invoker {
     private Map<Utils.Cmd, Command> map;
+
     private static Invoker invoker = new Invoker();
 
     private Invoker(){
@@ -23,6 +24,7 @@ public class Invoker {
     }
 
     public void addCommand(Utils.Cmd key, Command cmd){
+
         Objects.requireNonNull(key);
         Objects.requireNonNull(cmd);
         this.map.put(key, cmd);

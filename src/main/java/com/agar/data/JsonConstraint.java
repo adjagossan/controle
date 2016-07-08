@@ -16,7 +16,6 @@ public class JsonConstraint
 {
    // private static Logger logger = LogManager.getLogger(JsonConstraint.class);
     private static JsonConstraint jsonConstraint = new JsonConstraint();
-
     private JsonConstraint(){}
 
     public static JsonConstraint getInstance(){
