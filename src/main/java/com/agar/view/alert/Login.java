@@ -2,6 +2,7 @@ package com.agar.view.alert;
 
 import javafx.beans.NamedArg;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -9,7 +10,7 @@ import javafx.scene.layout.GridPane;
  */
 public class Login extends Alert {
 
-    public Login(@NamedArg("contentText") String contentText, ButtonType... buttons) {
+    public Login(@NamedArg("contentText") String contentText/*, ButtonType... buttons*/) {
         super(AlertType.NONE, contentText, ButtonType.OK, ButtonType.CANCEL);
         Label server = new Label("Serveur");
         Label user = new Label("Utilisateur");
@@ -36,5 +37,15 @@ public class Login extends Alert {
 
         gridPane.add(database, 1, 4);
         gridPane.add(databaseValue, 2, 4);
+
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+
+       //ColumnConstraints c1 = new ColumnConstraints();
+        //c1.setPercentWidth(30);
+
+        //gridPane.getColumnConstraints().addAll(c1);
+
+        this.getDialogPane().setContent(gridPane);
     }
 }
