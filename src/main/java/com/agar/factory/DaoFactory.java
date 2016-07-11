@@ -13,13 +13,13 @@ public class DaoFactory {
     private BoneCP connectionPool;
     private static String URL = "jdbc:sqlserver://SRVTEST;databaseName=AcaciasCucq";
     private static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static String USERNAME = "csis";
-    private static String PASSWORD = "admincsis";
+    private static String USERNAME = "sa";
+    private static String PASSWORD = "sqladmin";
     private static final int minConnectionsPerPartition = 5;
     private static final int maxConnectionsPerPartition = 10;
     private static final int partitionCount = 2;
 
-    public DaoFactory(BoneCP connectionPool){
+    private DaoFactory(BoneCP connectionPool){
         this.connectionPool = connectionPool;
     }
 
@@ -53,7 +53,7 @@ public class DaoFactory {
         return instance;
     }
 
-    Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return connectionPool.getConnection();
     }
 }

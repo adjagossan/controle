@@ -2,6 +2,7 @@ package com.agar.view;
 
 import com.agar.utils.Utils;
 import com.agar.view.alert.ExceptionHandler;
+import com.agar.view.alert.Login;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
@@ -39,6 +40,8 @@ public class MainScreen extends Application {
             new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
         }
         finally{
+            Login login = new Login("");
+            login.showAndWait();
             Scene scene = new Scene(tabPane, 500, 500);
             stage.setScene(scene);
             stage.show();

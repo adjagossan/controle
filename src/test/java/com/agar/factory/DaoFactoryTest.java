@@ -20,4 +20,16 @@ public class DaoFactoryTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void getConnectionTest(){
+        try {
+            Assert.assertNotNull(DaoFactory.getInstance().getConnection());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
