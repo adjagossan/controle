@@ -2,12 +2,10 @@ package com.agar.dao;
 
 import java.sql.*;
 import java.util.*;
-
 /**
  * Created by SDEV2 on 11/07/2016.
  */
 public class DatabaseTableDao implements Dao {
-
     private Connection connection;
     private final String TABLE_NAME = "TABLE_NAME";
     private final String[] TABLE_TYPES = {"TABLE"};
