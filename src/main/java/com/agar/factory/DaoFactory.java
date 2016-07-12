@@ -5,13 +5,14 @@ import com.jolbox.bonecp.BoneCPConfig;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
+//ReportServerTempDB
+//AcaciasCucq
 /**
  * Created by SDEV2 on 08/07/2016.
  */
 public class DaoFactory {
     private BoneCP connectionPool;
-    private static String URL = "jdbc:sqlserver://SRVTEST;databaseName=AcaciasCucq";
+    private static String URL = "jdbc:sqlserver://SRVTEST;databaseName=ReportServerTempDB";
     private static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static String USERNAME = "sa";
     private static String PASSWORD = "sqladmin";

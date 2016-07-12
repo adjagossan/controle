@@ -1,10 +1,7 @@
 package com.agar.dao;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by SDEV2 on 11/07/2016.
@@ -24,20 +21,21 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public List<String> getTables() throws SQLException
+    public TreeMap<String, List<String>>/*List<String>*/ getTables() throws SQLException
     {
-        List<String> list = new ArrayList<>();
-
+        //List<String> list = new ArrayList<>();
+        TreeMap<String, List<String>> map = new TreeMap<>();
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet resultSet = dmd.getTables(connection.getCatalog(), null, null, TABLE_TYPES);
-
         while(resultSet.next()){
-            list.add(resultSet.getString(TABLE_NAME));
-            System.out.println(resultSet.getString(TABLE_NAME));
+            //list.add(resultSet.getString(TABLE_NAME));
+            map.put(resultSet.getString(TABLE_NAME), new ArrayList<>());
         }
-
         connection.close();
-        return list;
+        map.forEach((s, strings) -> System.out.println(s+" -> "+String.join(",",strings)));
+        //Collections.sort(list);
+        //list.forEach(System.out::println);
+        return map/*list*/;
     }
 
     /**
@@ -45,21 +43,20 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public Map<String, List<String>> getTablesWithAssociatedColumns() throws SQLException {
-        Map<String, List<String>> map = new HashMap<>();
-
+    public TreeMap<String, List<String>> getTablesWithAssociatedColumns() throws SQLException {
+        TreeMap<String, List<String>> map = new TreeMap<>();
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet resultSet = dmd.getTables(connection.getCatalog(), null, null, TABLE_TYPES);
-
-        while(resultSet.next()) {
+        resultSet.setFetchSize(10);
+        while(resultSet.next()){
             map.put(resultSet.getString(TABLE_NAME), new ArrayList<>());
             ResultSet fields = dmd.getColumns(null, null, resultSet.getString(TABLE_NAME), null);
             while(fields.next()){
                 map.get(resultSet.getString(TABLE_NAME)).add(fields.getString("COLUMN_NAME"));
-                map.forEach((s, strings) -> System.out.println(s+" "+strings.toArray().toString()));
             }
         }
         connection.close();
+        map.forEach((s, strings) -> System.out.println(s+" -> "+String.join(",",strings)));
         return map;
     }
 
@@ -70,16 +67,15 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public Map<String, List<String>> getColumns(String tableName) throws SQLException {
-        Map<String, List<String>> map = new HashMap<>();
+    public TreeMap<String, List<String>> getColumns(String tableName) throws SQLException {
+        TreeMap<String, List<String>> map = new TreeMap<>();
         map.put(tableName, new ArrayList<>());
-
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet fields = dmd.getColumns(null, null, tableName, null);
         while(fields.next())
             map.get(tableName).add(fields.getString("COLUMN_NAME"));
-
         connection.close();
+        map.forEach((s, strings) -> System.out.println(s+" -> "+String.join(",",strings)));
         return map;
     }
 }
