@@ -19,15 +19,15 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public TreeMap<String, List<String>>/*List<String>*/ getTables() throws SQLException
+    public TreeMap<String, Set<String>>/*List<String>*/ getTables() throws SQLException
     {
         //List<String> list = new ArrayList<>();
-        TreeMap<String, List<String>> map = new TreeMap<>();
+        TreeMap<String, Set<String>> map = new TreeMap<>();
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet resultSet = dmd.getTables(connection.getCatalog(), null, null, TABLE_TYPES);
         while(resultSet.next()){
             //list.add(resultSet.getString(TABLE_NAME));
-            map.put(resultSet.getString(TABLE_NAME), new ArrayList<>());
+            map.put(resultSet.getString(TABLE_NAME), new HashSet<>());
         }
         connection.close();
         map.forEach((s, strings) -> System.out.println(s+" -> "+String.join(",",strings)));
@@ -41,13 +41,13 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public TreeMap<String, List<String>> getTablesWithAssociatedColumns() throws SQLException {
-        TreeMap<String, List<String>> map = new TreeMap<>();
+    public TreeMap<String, Set<String>> getTablesWithAssociatedColumns() throws SQLException {
+        TreeMap<String, Set<String>> map = new TreeMap<>();
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet resultSet = dmd.getTables(connection.getCatalog(), null, null, TABLE_TYPES);
         resultSet.setFetchSize(10);
         while(resultSet.next()){
-            map.put(resultSet.getString(TABLE_NAME), new ArrayList<>());
+            map.put(resultSet.getString(TABLE_NAME), new HashSet<>());
             ResultSet fields = dmd.getColumns(null, null, resultSet.getString(TABLE_NAME), null);
             while(fields.next()){
                 map.get(resultSet.getString(TABLE_NAME)).add(fields.getString("COLUMN_NAME"));
@@ -65,9 +65,9 @@ public class DatabaseTableDao implements Dao {
      * @return
      * @throws SQLException
      */
-    public TreeMap<String, List<String>> getColumns(String tableName) throws SQLException {
-        TreeMap<String, List<String>> map = new TreeMap<>();
-        map.put(tableName, new ArrayList<>());
+    public TreeMap<String, Set<String>> getColumns(String tableName) throws SQLException {
+        TreeMap<String, Set<String>> map = new TreeMap<>();
+        map.put(tableName, new HashSet<>());
         DatabaseMetaData dmd = connection.getMetaData();
         ResultSet fields = dmd.getColumns(null, null, tableName, null);
         while(fields.next())

@@ -3,16 +3,12 @@ package com.agar.view;
 import com.agar.dao.DatabaseTableDao;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -58,12 +54,27 @@ public class DualTreeView extends GridPane {
         vbox.getChildren().addAll(sendRightButton, sendLeftButton);
         this.add(vbox, 1, 1);
 
-        TreeMap<String, List<String>> emptyTreeMap = new TreeMap<>();
+        TreeMap<String, Set<String>> emptyTreeMap = new TreeMap<>();
         DBTablesTree rightDBTablesTree = new DBTablesTree(emptyTreeMap);
         this.add(rightDBTablesTree, 2, 1);
 
         sendRightButton.setOnAction(event -> {
+            leftDBTablesTree.remove(leftDBTablesTree.getSelectedObservableMap());
             rightDBTablesTree.setItems(leftDBTablesTree.getSelectedObservableMap());
+            leftDBTablesTree.getSelectedObservableMap().clear();
         });
+
+        sendLeftButton.setOnAction(event -> {
+            rightDBTablesTree.remove(rightDBTablesTree.getSelectedObservableMap());
+            leftDBTablesTree.setItems(rightDBTablesTree.getSelectedObservableMap());
+            rightDBTablesTree.getSelectedObservableMap().clear();
+        });
+
+        Button okButton = new Button("Ok");
+        Button cancelButton = new Button("Annuler");
+
+        HBox hbox = new HBox(10);
+        hbox.getChildren().addAll(okButton, cancelButton);
+        this.add(hbox, 1, 3);
     }
 }

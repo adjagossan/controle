@@ -47,7 +47,6 @@ public class MainScreen extends Application {
             new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
         }
         finally{
-<<<<<<< HEAD
             /*Login login = new Login("");
             login.showAndWait();
             try {
@@ -57,10 +56,6 @@ public class MainScreen extends Application {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-=======
-            Login login = new Login("");
-            login.showAndWait();
->>>>>>> d3bab801a1c5c82baeb6843017934185e738845e
             Scene scene = new Scene(tabPane, 500, 500);
             stage.setScene(scene);
             stage.show();
@@ -93,7 +88,7 @@ public class MainScreen extends Application {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Scene scene = new Scene(root, 400, 250, Color.WHITE);
+        Scene scene = new Scene(root,500, 500, Color.WHITE);
         stage.setScene(scene);
         stage.show();
     }
