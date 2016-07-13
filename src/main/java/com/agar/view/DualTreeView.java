@@ -35,6 +35,7 @@ public class DualTreeView extends GridPane {
         rightConstraint.setHgrow(Priority.ALWAYS);
 
         this.getColumnConstraints().addAll(leftConstraint, middleConstraint, rightConstraint);
+        init();
     }
 
     public void init() throws SQLException, ClassNotFoundException {
@@ -47,6 +48,7 @@ public class DualTreeView extends GridPane {
         this.add(selectedTablesLabel, 2, 0);
 
         DBTablesTree leftDBTablesTree = new DBTablesTree(dao.getTablesWithAssociatedColumns());
+
         this.add(leftDBTablesTree, 0, 1);
 
         Button sendRightButton = new Button("->");
@@ -59,5 +61,9 @@ public class DualTreeView extends GridPane {
         TreeMap<String, List<String>> emptyTreeMap = new TreeMap<>();
         DBTablesTree rightDBTablesTree = new DBTablesTree(emptyTreeMap);
         this.add(rightDBTablesTree, 2, 1);
+
+        sendRightButton.setOnAction(event -> {
+            rightDBTablesTree.setItems(leftDBTablesTree.getSelectedObservableMap());
+        });
     }
 }

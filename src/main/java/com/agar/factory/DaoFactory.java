@@ -2,17 +2,16 @@ package com.agar.factory;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-//ReportServerTempDB
-//AcaciasCucq
 /**
  * Created by SDEV2 on 08/07/2016.
  */
 public class DaoFactory {
     private BoneCP connectionPool;
-    private static String URL = "jdbc:sqlserver://SRVTEST;databaseName=ReportServerTempDB";
+    private static String databaseName = "ReportServerTempDB";//AcaciasCucq
+    private static String hostName = "SRVTEST";
+    private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
     private static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static String USERNAME = "sa";
     private static String PASSWORD = "sqladmin";
@@ -52,6 +51,26 @@ public class DaoFactory {
 
         DaoFactory instance = new DaoFactory(connectionPool);
         return instance;
+    }
+
+    public static String getDatabaseName() {
+        return databaseName;
+    }
+
+    public static void setDatabaseName(String databaseName) {
+        DaoFactory.databaseName = databaseName;
+    }
+
+    public static void setHostName(String hostName) {
+        DaoFactory.hostName = hostName;
+    }
+
+    public static void setUSERNAME(String USERNAME) {
+        DaoFactory.USERNAME = USERNAME;
+    }
+
+    public static void setPASSWORD(String PASSWORD) {
+        DaoFactory.PASSWORD = PASSWORD;
     }
 
     public Connection getConnection() throws SQLException {
