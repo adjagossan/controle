@@ -143,7 +143,6 @@ public class ListViewModelImport extends ListView<String> implements Subject {
                 subscriber.update(this);
             } catch (IOException e) {
                 e.printStackTrace();
-                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
         });
     }

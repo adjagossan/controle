@@ -1,1 +1,1 @@
-[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"dossier":["adresse","mail","ville"]}}]
+[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"dossier":["adresse","mail","ville"]}},{"model":{"actor":["last_update","last_name","actor_id","first_name"]}}]

@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class TableViewControl extends TableView<String> implements Subscriber
 {
-    private List<ModelImport> listModelImport;
+    private /*List*/Set<ModelImport> listModelImport;
     private String modelImportJsonFileName;
     private String constraintJsonFileName;
     private Map<String, List<ObservableValue<Boolean>>> map = new HashMap<>();

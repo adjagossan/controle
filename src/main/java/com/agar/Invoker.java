@@ -36,4 +36,11 @@ public class Invoker {
         else
             throw new IllegalArgumentException(key+" isn't a valid command");
     }
+
+    public Command getCommand(Utils.Cmd key){
+        Command cmd = null;
+        if(map.containsKey(key))
+            cmd = map.get(key);
+        return cmd;
+    }
 }

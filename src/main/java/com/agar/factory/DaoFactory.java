@@ -11,10 +11,10 @@ public class DaoFactory {
     private BoneCP connectionPool;
     private static String databaseName = "ReportServerTempDB";//AcaciasCucq
     private static String hostName = "SRVTEST";
-    private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
-    private static String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static String USERNAME = "sa";
-    private static String PASSWORD = "sqladmin";
+    private static String URL = "jdbc:mysql://localhost:3306/sakila?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";//"jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
+    private static String DRIVER =  "com.mysql.cj.jdbc.Driver"; //"com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private static String USERNAME = "root";//"sa";
+    private static String PASSWORD = "root";//"sqladmin";
     private static final int minConnectionsPerPartition = 5;
     private static final int maxConnectionsPerPartition = 10;
     private static final int partitionCount = 2;
@@ -35,11 +35,9 @@ public class DaoFactory {
 
         try{
             BoneCPConfig config = new BoneCPConfig();
-
             config.setJdbcUrl(URL);
             config.setUsername(USERNAME);
             config.setPassword(PASSWORD);
-
             config.setMinConnectionsPerPartition(minConnectionsPerPartition);
             config.setMaxConnectionsPerPartition(maxConnectionsPerPartition);
             config.setPartitionCount(partitionCount);

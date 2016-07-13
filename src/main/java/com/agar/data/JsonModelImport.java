@@ -9,10 +9,7 @@ import com.google.gson.Gson;
 //import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -33,10 +30,10 @@ public class JsonModelImport implements Subject{
      * @param JsonFileName
      * @return
      */
-    public List<ModelImport> getModelImports(String JsonFileName) throws IOException {
+    public Set/*List*/<ModelImport> getModelImports(String JsonFileName) throws IOException {
         BufferedReader reader;
         String content = "";
-        List<ModelImport> modelImportList = new ArrayList<>();
+        /*List*/Set<ModelImport> modelImportList = new HashSet<>()/*ArrayList<>()*/;
         Gson gson = new Gson();
         try
         {
@@ -47,7 +44,7 @@ public class JsonModelImport implements Subject{
                 while ((line = reader.readLine()) != null)
                     content += line;
                 if(!content.contentEquals(""))
-                    modelImportList = new ArrayList<>(Arrays.asList(gson.fromJson(content, ModelImport[].class)));
+                    modelImportList = new /*ArrayList<>*/HashSet<>(Arrays.asList(gson.fromJson(content, ModelImport[].class)));
             }finally{
                 if(reader != null) reader.close();
             }
@@ -76,7 +73,7 @@ public class JsonModelImport implements Subject{
         String modelImport = null;
         if(modelImportName != null) modelImport = modelImportName.trim();
         BufferedWriter writer = null;
-        List<ModelImport> modelImportList/* = new ArrayList<>()*/;
+        /*List*/Set<ModelImport> modelImportList/* = new ArrayList<>()*/;
         Gson gson = new Gson();
 
         try {
@@ -115,7 +112,7 @@ public class JsonModelImport implements Subject{
         return true;
     }
 
-    private boolean containsModel(List<ModelImport> modelImportList, String modelImportName, String field)
+    private boolean containsModel(/*List*/Set<ModelImport> modelImportList, String modelImportName, String field)
     {
         boolean found = false;
         if(modelImportList !=null && !modelImportList.isEmpty()&& modelImportName != null)

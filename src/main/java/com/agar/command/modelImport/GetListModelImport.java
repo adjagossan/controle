@@ -6,6 +6,7 @@ import com.agar.model.ModelImport;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by SDEV2 on 06/07/2016.
@@ -35,11 +36,11 @@ public class GetListModelImport implements Command {
     private JsonModelImport jsonModelImport;
     private String JsonFileName;
 
-    public List<ModelImport> getListModelImport() {
+    public /*List*/Set<ModelImport> getListModelImport() {
         return listModelImport;
     }
 
-    private List<ModelImport> listModelImport;
+    private /*List*/Set<ModelImport> listModelImport;
 
     public GetListModelImport(JsonModelImport jsonModelImport, String JsonFileName){
         this.jsonModelImport = jsonModelImport;

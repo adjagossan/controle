@@ -4,6 +4,7 @@ import javafx.beans.NamedArg;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 
 /**
  * Created by SDEV2 on 08/07/2016.
@@ -12,6 +13,7 @@ public class Login extends Alert {
 
     public Login(@NamedArg("contentText") String contentText/*, ButtonType... buttons*/) {
         super(AlertType.NONE, contentText, ButtonType.OK, ButtonType.CANCEL);
+        this.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Label server = new Label("Serveur");
         Label user = new Label("Utilisateur");
         Label password = new Label("Mot de passe");
