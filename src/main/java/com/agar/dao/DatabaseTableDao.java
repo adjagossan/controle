@@ -13,7 +13,6 @@ public class DatabaseTableDao implements Dao {
     public DatabaseTableDao() throws SQLException, ClassNotFoundException {
         this.connection = getConnection();
     }
-
     /**
      *
      * @return
@@ -48,7 +47,9 @@ public class DatabaseTableDao implements Dao {
         resultSet.setFetchSize(10);
         while(resultSet.next()){
             map.put(resultSet.getString(TABLE_NAME), new HashSet<>());
+
             ResultSet fields = dmd.getColumns(connection.getCatalog(), null, resultSet.getString(TABLE_NAME), "%"/*null*/);
+
             while(fields.next()){
                 map.get(resultSet.getString(TABLE_NAME)).add(fields.getString("COLUMN_NAME"));
             }

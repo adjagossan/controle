@@ -16,7 +16,9 @@ import java.util.*;
 /**
  * Created by SDEV2 on 11/07/2016.
  */
+
 public class DBTablesTree extends TreeView<String> implements Subject {
+
     private ObservableMap<String, Set<String>> observableMap;
     private ObservableMap<String, Set<String>> selectedObservableMap = FXCollections.observableMap(new TreeMap<>());
     private CheckBoxTreeItem<String> superRootItem = new CheckBoxTreeItem<>(DaoFactory.getDatabaseName()+" (base de données)");
