@@ -13,7 +13,7 @@ public class Login extends Alert {
 
     private TextField serverValue = new TextField();
     private TextField userValue = new TextField();
-    private TextField passwordValue = new TextField();
+    private PasswordField passwordValue = new PasswordField();
     private TextField databaseValue = new TextField();
 
     public Login(@NamedArg("contentText") String contentText/*, ButtonType... buttons*/) {
@@ -23,11 +23,6 @@ public class Login extends Alert {
         Label user = new Label("Utilisateur");
         Label password = new Label("Mot de passe");
         Label database = new Label("Base de donnée");
-
-        serverValue = new TextField();
-        userValue = new TextField();
-        passwordValue = new TextField();
-        databaseValue = new TextField();
 
         GridPane gridPane = new GridPane();
 
