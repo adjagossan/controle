@@ -11,10 +11,11 @@ public class DaoFactory {
     private BoneCP connectionPool;
     private static String databaseName = "ReportServerTempDB";//AcaciasCucq
     private static String hostName = "SRVTEST";
-    private static String URL = "jdbc:mysql://localhost:3306/sakila?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";//"jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
-    private static String DRIVER =  "com.mysql.cj.jdbc.Driver"; //"com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static String USERNAME = "root";//"sa";
-    private static String PASSWORD = "root";//"sqladmin";
+    //"jdbc:mysql://localhost:3306/sakila?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+    private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
+    private static String DRIVER =  "com.microsoft.sqlserver.jdbc.SQLServerDriver";//"com.mysql.cj.jdbc.Driver";
+    private static String USERNAME = "sa";//"root";
+    private static String PASSWORD = "sqladmin";//"root";
     private static final int minConnectionsPerPartition = 5;
     private static final int maxConnectionsPerPartition = 10;
     private static final int partitionCount = 2;
@@ -25,7 +26,6 @@ public class DaoFactory {
 
     public static DaoFactory getInstance() throws ClassNotFoundException, SQLException{
         BoneCP connectionPool;
-
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {

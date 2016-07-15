@@ -1,8 +1,8 @@
 package com.agar.view.alert;
 
+import com.agar.factory.DaoFactory;
 import javafx.beans.NamedArg;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
@@ -10,6 +10,11 @@ import javafx.scene.layout.Region;
  * Created by SDEV2 on 08/07/2016.
  */
 public class Login extends Alert {
+
+    private TextField serverValue = new TextField();
+    private TextField userValue = new TextField();
+    private TextField passwordValue = new TextField();
+    private TextField databaseValue = new TextField();
 
     public Login(@NamedArg("contentText") String contentText/*, ButtonType... buttons*/) {
         super(AlertType.NONE, contentText, ButtonType.OK, ButtonType.CANCEL);
@@ -19,13 +24,11 @@ public class Login extends Alert {
         Label password = new Label("Mot de passe");
         Label database = new Label("Base de donnée");
 
-        TextField serverValue = new TextField();
-        TextField userValue = new TextField();
-        TextField passwordValue = new TextField();
-        TextField databaseValue = new TextField();
+        serverValue = new TextField();
+        userValue = new TextField();
+        passwordValue = new TextField();
+        databaseValue = new TextField();
 
-        //Button connection = new Button("Se connecter");
-        //Button
         GridPane gridPane = new GridPane();
 
         gridPane.add(server, 1, 1);
@@ -42,12 +45,13 @@ public class Login extends Alert {
 
         gridPane.setVgap(5);
         gridPane.setHgap(5);
-
-       //ColumnConstraints c1 = new ColumnConstraints();
-        //c1.setPercentWidth(30);
-
-        //gridPane.getColumnConstraints().addAll(c1);
-
         this.getDialogPane().setContent(gridPane);
+    }
+
+    public void config(){
+        DaoFactory.setDatabaseName(databaseValue.getText().toString());
+        DaoFactory.setHostName(serverValue.getText().toString());
+        DaoFactory.setUSERNAME(userValue.getText().toString());
+        DaoFactory.setPASSWORD(passwordValue.getText().toString());
     }
 }

@@ -71,9 +71,9 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         this.getItems().addAll(map.keySet());
         this.setCellFactory(CheckBoxListCell.forListView(item -> map.get(item)));
 
-        contextMenuHandler();
+        //contextMenuHandler();
     }
-
+/*
     private void contextMenuHandler(){
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addField = new MenuItem("Ajouter un nouveau champ");
@@ -95,7 +95,7 @@ public class ListViewModelImport extends ListView<String> implements Subject {
             if(event.getButton().equals(MouseButton.SECONDARY) && !this.getSelectionModel().isEmpty()) contextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
     }
-
+*/
     private void uncheckTheOtherModel(String selectedModel)
     {
         map.forEach((key, value) -> {if(!key.contentEquals(selectedModel))map.replace(key, value, new SimpleBooleanProperty(false));});

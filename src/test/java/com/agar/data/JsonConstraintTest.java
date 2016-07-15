@@ -12,7 +12,7 @@ public class JsonConstraintTest {
 
     @Test
     public void addConstraint(){
-        for(String constraint: new String[]{"champ non vide", "champ numerique"})
+        for(String constraint: new String[]{"champ non vide", "champ numerique", "Aucun doublon"})
             try {
                 Assert.assertTrue(JsonConstraint.getInstance().addConstraint("constraint.json", constraint));
             } catch (IOException e) {

@@ -20,16 +20,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by SDEV2 on 12/07/2016.
  */
-public class DualTreeView extends GridPane {
+public class DualTreeView extends GridPane implements Subject {
     private DatabaseTableDao dao;
+    private List<Subscriber> subscribers = new ArrayList<>();
+    private String selectedModel;
 
     public DualTreeView() throws SQLException, ClassNotFoundException {
         this.setPadding(new Insets(5));
@@ -47,6 +46,7 @@ public class DualTreeView extends GridPane {
         afterRightConstraint.setHgrow(Priority.ALWAYS);
 
         this.getColumnConstraints().addAll(leftConstraint, middleConstraint, rightConstraint, afterRightConstraint);
+        this.register(SplitPaneModelImport.getInstance());
         init();
     }
 
@@ -117,6 +117,7 @@ public class DualTreeView extends GridPane {
                         new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
                     }
                 });
+                this.setValue(s);
                 /*Command cmd =Invoker.getInstance().getCommand(Utils.Cmd.ADD_MODEL_IMPORT);
                 if(cmd != null){
                     cmd.
@@ -137,6 +138,43 @@ public class DualTreeView extends GridPane {
         hbox.setSpacing(50);
         hbox.getChildren().addAll(okButton, cancelButton);
         this.add(hbox, 2, 3);
+    }
+
+    @Override
+    public void register(Subscriber subscriber) {
+        if(!subscribers.contains(subscriber))subscribers.add(subscriber);
+    }
+
+    @Override
+    public void unregister(Subscriber subscriber) {
+        if(subscribers.contains(subscriber))subscribers.remove(subscriber);
+    }
+
+    @Override
+    public boolean isAttached(Subscriber subscriber) {
+        return subscribers.contains(subscriber);
+    }
+
+    @Override
+    public void notifySubscribers() {
+        subscribers.forEach(subscriber -> {
+            try {
+                subscriber.update(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void setValue(Object object) {
+        this.selectedModel = (String)object;
+        notifySubscribers();
+    }
+
+    @Override
+    public Object getValue() {
+        return selectedModel;
     }
 
     class NestedGridPane extends GridPane implements Subscriber{
