@@ -9,23 +9,21 @@ import java.sql.SQLException;
  */
 public class DaoFactory {
     private BoneCP connectionPool;
-    private static String databaseName = "ReportServerTempDB";//AcaciasCucq
-    private static String hostName = "SRVTEST";
-    //"jdbc:mysql://localhost:3306/sakila?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
-    private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
-    private static String DRIVER =  "com.microsoft.sqlserver.jdbc.SQLServerDriver";//"com.mysql.cj.jdbc.Driver";
-    private static String USERNAME = "sa";//"root";
-    private static String PASSWORD = "sqladmin";//"root";
+    private static DaoFactory instance;
+    private static String databaseName; //= "ReportServerTempDB";//AcaciasCucq //sakila
+    private static String hostName; //= "SRVTEST";
+    private static String URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+    //private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
+    private static String DRIVER =  "com.mysql.cj.jdbc.Driver";
+    //private static String DRIVER =  "com.microsoft.sqlserver.jdbc.SQLServerDriver";//"com.mysql.cj.jdbc.Driver";
+    private static String USERNAME;// =/*"sa";*/"root";
+    private static String PASSWORD;// = /*"sqladmin";*/"root";
     private static final int minConnectionsPerPartition = 5;
     private static final int maxConnectionsPerPartition = 10;
     private static final int partitionCount = 2;
 
-    private DaoFactory(BoneCP connectionPool){
-        this.connectionPool = connectionPool;
-    }
-
-    public static DaoFactory getInstance() throws ClassNotFoundException, SQLException{
-        BoneCP connectionPool;
+    private DaoFactory(/*BoneCP connectionPool*/) throws SQLException, ClassNotFoundException {
+        //this.connectionPool = connectionPool;
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
@@ -35,6 +33,35 @@ public class DaoFactory {
 
         try{
             BoneCPConfig config = new BoneCPConfig();
+            System.out.println("url :"+URL);
+            config.setJdbcUrl(URL);
+            config.setUsername(USERNAME);
+            config.setPassword(PASSWORD);
+            config.setMinConnectionsPerPartition(minConnectionsPerPartition);
+            config.setMaxConnectionsPerPartition(maxConnectionsPerPartition);
+            config.setPartitionCount(partitionCount);
+            this.connectionPool = new BoneCP(config);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public static DaoFactory getInstance() throws ClassNotFoundException, SQLException{
+        if(instance == null)
+            instance = new DaoFactory();
+        return instance;
+        /*BoneCP connectionPool;
+        try {
+            Class.forName(DRIVER);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        try{
+            BoneCPConfig config = new BoneCPConfig();
+            System.out.println("url :"+URL);
             config.setJdbcUrl(URL);
             config.setUsername(USERNAME);
             config.setPassword(PASSWORD);
@@ -48,7 +75,7 @@ public class DaoFactory {
         }
 
         DaoFactory instance = new DaoFactory(connectionPool);
-        return instance;
+        return instance;*/
     }
 
     public static String getDatabaseName() {
@@ -71,7 +98,32 @@ public class DaoFactory {
         DaoFactory.PASSWORD = PASSWORD;
     }
 
+    public static String getHostName() {
+        return hostName;
+    }
+
+    public static String getUSERNAME() {
+        return USERNAME;
+    }
+
+    public static String getPASSWORD() {
+        return PASSWORD;
+    }
+
+    public static String getURL() {
+        return URL;
+    }
+
+    public static void setURL(String hostName, String databaseName) {
+        URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+        System.out.println("-> url :"+URL);
+    }
+
     public Connection getConnection() throws SQLException {
-        return connectionPool.getConnection();
+        return this.connectionPool.getConnection();
+    }
+
+    public void shutDown(){
+        this.connectionPool.shutdown();
     }
 }

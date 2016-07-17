@@ -5,6 +5,9 @@ import com.agar.Subscriber;
 import com.agar.factory.DaoFactory;
 import com.agar.view.alert.ExceptionHandler;
 import com.agar.view.alert.Login;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -29,6 +32,9 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
 {
     private ListViewModelImport listViewModelImport;
     private static SplitPaneModelImport splitPaneModelImport/* = new SplitPaneModelImport()*/;
+    private Connection connection;
+    //private boolean isConnected = false;
+    private BooleanProperty isConnected = new SimpleBooleanProperty(false);
 
     public static SplitPaneModelImport getInstance(String JsonFileName) throws IOException {
         if(splitPaneModelImport == null)
@@ -49,20 +55,29 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
             throw e;
         }
         HBox hBox = new HBox();
-        //TextField newModel = new TextField();
-        //newModel.setPromptText("Inserez le nouveau model");
+        hBox.setSpacing(100);
+        hBox.setPadding(new Insets(25));
         Button addModelImportBTN = new Button("Ajouter un nouveau Modèle");
-        hBox.getChildren().addAll(/*newModel, */addModelImportBTN);
+        Button signOutBTN = new Button("Se déconnecter");
+        signOutBTN.setOnAction(event -> {
+            this.isConnected.set(false);
+            try {
+                DaoFactory.getInstance().shutDown();
+            } catch (ClassNotFoundException e) {
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+            } catch (SQLException e) {
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+            }
+        });
+        signOutBTN.visibleProperty().bind(this.isConnected);
+
+        hBox.getChildren().addAll(addModelImportBTN, signOutBTN);
 
         addModelImportBTN.setOnAction(event -> {
-            callWindowLogin();
-            /*try {
-                if(JsonModelImport.getInstance().addModelImport(JsonFileName, newModel.getText(), null))
-                    listViewModelImport.addItem(newModel.getText());
-            } catch (IOException e) {
-                e.printStackTrace();
-                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
-            }*/
+            if(!this.isConnected.get())
+                callWindowLogin();
+            else
+                showWindow(null);
         });
 
         vBox.getChildren().addAll(listViewModelImport,  hBox);
@@ -79,21 +94,16 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
 
         if(result.get() == ButtonType.OK){
             DaoFactory dao = null;
-            Connection connection;
+            //Connection connection;
             try {
+                login.config();
                 dao = DaoFactory.getInstance();
                 if(dao != null){
-                    connection = dao.getConnection();
-                    if(connection != null){
-                        login.config();
-                        Stage stage = new Stage(StageStyle.UTILITY);
-                        stage.initModality(Modality.APPLICATION_MODAL);
-                        BorderPane borderPane = new BorderPane();
-                        borderPane.setCenter(new DualTreeView());
-                        stage.setScene(new Scene(borderPane, 1300, 800, Color.WHITE));
-                        stage.setTitle("");
-                        stage.setResizable(false);
-                        stage.show();
+                    this.connection = dao.getConnection();
+                    if(this.connection != null){
+                        this.isConnected.set(true);
+                        this.connection.close();
+                        showWindow(null);
                     }
                 }
             } catch (ClassNotFoundException e) {
@@ -102,6 +112,23 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
                 new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
         }
+    }
+
+    public static void showWindow(String tableName){
+        Stage stage = new Stage(StageStyle.UTILITY);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        BorderPane borderPane = new BorderPane();
+        try {
+            borderPane.setCenter(new DualTreeView(tableName));
+        } catch (SQLException e) {
+            new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+        } catch (ClassNotFoundException e) {
+            new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+        }
+        stage.setScene(new Scene(borderPane, 1300, 800, Color.WHITE));
+        stage.setTitle("");
+        stage.setResizable(false);
+        stage.show();
     }
 
     @Override

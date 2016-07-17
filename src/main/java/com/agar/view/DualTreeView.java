@@ -30,7 +30,7 @@ public class DualTreeView extends GridPane implements Subject {
     private List<Subscriber> subscribers = new ArrayList<>();
     private String selectedModel;
 
-    public DualTreeView() throws SQLException, ClassNotFoundException {
+    public DualTreeView(String tableName) throws SQLException, ClassNotFoundException {
         this.setPadding(new Insets(5));
         this.setHgap(10);
         this.setVgap(10);
@@ -47,10 +47,10 @@ public class DualTreeView extends GridPane implements Subject {
 
         this.getColumnConstraints().addAll(leftConstraint, middleConstraint, rightConstraint, afterRightConstraint);
         this.register(SplitPaneModelImport.getInstance());
-        init();
+        init(tableName);
     }
 
-    public void init() throws SQLException, ClassNotFoundException {
+    public void init(String tableName) throws SQLException, ClassNotFoundException {
         Label candidateTablesLabel = new Label("Tables candidates");
         GridPane.setHalignment(candidateTablesLabel, HPos.CENTER);
         this.add(candidateTablesLabel, 0, 0);
@@ -63,7 +63,11 @@ public class DualTreeView extends GridPane implements Subject {
         GridPane.setHalignment(renameLabel, HPos.CENTER);
         this.add(renameLabel, 3, 0);
 
-        DBTablesTree leftDBTablesTree = new DBTablesTree(dao.getTablesWithAssociatedColumns());
+        DBTablesTree leftDBTablesTree;// = new DBTablesTree(dao.getTablesWithAssociatedColumns());
+        if(tableName == null)
+            leftDBTablesTree = new DBTablesTree(dao.getTablesWithAssociatedColumns());
+        else
+            leftDBTablesTree = new DBTablesTree(dao.getColumns(tableName));
 
         this.add(leftDBTablesTree, 0, 1);
 

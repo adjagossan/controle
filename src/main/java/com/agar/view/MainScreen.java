@@ -70,7 +70,7 @@ public class MainScreen extends Application {
         Utils.configCommand();
         BorderPane root = new BorderPane();
         try {
-            root.setCenter(new DualTreeView());
+            root.setCenter(new DualTreeView(null));
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -89,15 +89,15 @@ public class MainScreen extends Application {
             DaoFactory dao = null;
             Connection connection;
             try {
+                login.config();
                 dao = DaoFactory.getInstance();
                 if(dao != null){
                     connection = dao.getConnection();
                     if(connection != null){
-                        login.config();
                         Stage stage = new Stage(StageStyle.UTILITY);
                         stage.initModality(Modality.APPLICATION_MODAL);
                         BorderPane borderPane = new BorderPane();
-                        borderPane.setCenter(new DualTreeView());
+                        borderPane.setCenter(new DualTreeView(null));
                         stage.setScene(new Scene(borderPane, 1300, 800, Color.WHITE));
                         stage.setTitle("");
                         stage.setResizable(false);

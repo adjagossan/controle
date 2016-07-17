@@ -48,5 +48,6 @@ public class Login extends Alert {
         DaoFactory.setHostName(serverValue.getText().toString());
         DaoFactory.setUSERNAME(userValue.getText().toString());
         DaoFactory.setPASSWORD(passwordValue.getText().toString());
+        DaoFactory.setURL(serverValue.getText().toString(), databaseValue.getText().toString());
     }
 }

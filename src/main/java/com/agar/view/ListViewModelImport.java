@@ -9,14 +9,21 @@ import com.agar.view.alert.ExceptionHandler;
 import com.agar.view.dialog.TextInputDialog;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -73,13 +80,14 @@ public class ListViewModelImport extends ListView<String> implements Subject {
 
         //contextMenuHandler();
     }
-/*
+
     private void contextMenuHandler(){
         ContextMenu contextMenu = new ContextMenu();
         MenuItem addField = new MenuItem("Ajouter un nouveau champ");
         addField.setOnAction(event -> {
             String selectedModel = this.getSelectionModel().getSelectedItem();
-            new TextInputDialog(selectedModel, "Champ", "Entrez un nouveau champ")
+            SplitPaneModelImport.showWindow(selectedModel);
+            /*new TextInputDialog(selectedModel, "Champ", "Entrez un nouveau champ")
                     .showAndWait()
                     .ifPresent(s -> {
                         try {
@@ -88,14 +96,14 @@ public class ListViewModelImport extends ListView<String> implements Subject {
                             e.printStackTrace();
                             new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
                         }
-                    });
+                    });*/
         });
         contextMenu.getItems().add(addField);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if(event.getButton().equals(MouseButton.SECONDARY) && !this.getSelectionModel().isEmpty()) contextMenu.show(this, event.getScreenX(), event.getScreenY());
         });
     }
-*/
+
     private void uncheckTheOtherModel(String selectedModel)
     {
         map.forEach((key, value) -> {if(!key.contentEquals(selectedModel))map.replace(key, value, new SimpleBooleanProperty(false));});
