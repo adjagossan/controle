@@ -78,7 +78,7 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         this.getItems().addAll(map.keySet());
         this.setCellFactory(CheckBoxListCell.forListView(item -> map.get(item)));
 
-        //contextMenuHandler();
+        contextMenuHandler();
     }
 
     private void contextMenuHandler(){
@@ -86,7 +86,11 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         MenuItem addField = new MenuItem("Ajouter un nouveau champ");
         addField.setOnAction(event -> {
             String selectedModel = this.getSelectionModel().getSelectedItem();
-            SplitPaneModelImport.showWindow(selectedModel);
+            if(!SplitPaneModelImport.isConnected())
+                SplitPaneModelImport.callWindowLogin(selectedModel);
+            else
+                SplitPaneModelImport.showWindow(selectedModel);
+            //SplitPaneModelImport.showWindow(selectedModel);
             /*new TextInputDialog(selectedModel, "Champ", "Entrez un nouveau champ")
                     .showAndWait()
                     .ifPresent(s -> {

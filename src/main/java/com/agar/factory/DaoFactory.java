@@ -12,10 +12,10 @@ public class DaoFactory {
     private static DaoFactory instance;
     private static String databaseName; //= "ReportServerTempDB";//AcaciasCucq //sakila
     private static String hostName; //= "SRVTEST";
-    private static String URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
-    //private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
-    private static String DRIVER =  "com.mysql.cj.jdbc.Driver";
-    //private static String DRIVER =  "com.microsoft.sqlserver.jdbc.SQLServerDriver";//"com.mysql.cj.jdbc.Driver";
+    //private static String URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+    private static String URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
+    //private static String DRIVER =  "com.mysql.cj.jdbc.Driver";
+    private static String DRIVER =  "com.microsoft.sqlserver.jdbc.SQLServerDriver";//"com.mysql.cj.jdbc.Driver";
     private static String USERNAME;// =/*"sa";*/"root";
     private static String PASSWORD;// = /*"sqladmin";*/"root";
     private static final int minConnectionsPerPartition = 5;
@@ -115,7 +115,8 @@ public class DaoFactory {
     }
 
     public static void setURL(String hostName, String databaseName) {
-        URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+        //URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
+        URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
         System.out.println("-> url :"+URL);
     }
 

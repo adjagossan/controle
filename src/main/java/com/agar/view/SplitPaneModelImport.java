@@ -32,9 +32,9 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
 {
     private ListViewModelImport listViewModelImport;
     private static SplitPaneModelImport splitPaneModelImport/* = new SplitPaneModelImport()*/;
-    private Connection connection;
+    //private Connection connection;
     //private boolean isConnected = false;
-    private BooleanProperty isConnected = new SimpleBooleanProperty(false);
+    private static BooleanProperty isConnected = new SimpleBooleanProperty(false);
 
     public static SplitPaneModelImport getInstance(String JsonFileName) throws IOException {
         if(splitPaneModelImport == null)
@@ -60,7 +60,7 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
         Button addModelImportBTN = new Button("Ajouter un nouveau Modèle");
         Button signOutBTN = new Button("Se déconnecter");
         signOutBTN.setOnAction(event -> {
-            this.isConnected.set(false);
+            /*this.*/isConnected.set(false);
             try {
                 DaoFactory.getInstance().shutDown();
             } catch (ClassNotFoundException e) {
@@ -69,13 +69,13 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
                 new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
         });
-        signOutBTN.visibleProperty().bind(this.isConnected);
+        signOutBTN.visibleProperty().bind(/*this.*/isConnected);
 
         hBox.getChildren().addAll(addModelImportBTN, signOutBTN);
 
         addModelImportBTN.setOnAction(event -> {
-            if(!this.isConnected.get())
-                callWindowLogin();
+            if(!/*this.*/isConnected.get())
+                callWindowLogin(null);
             else
                 showWindow(null);
         });
@@ -84,26 +84,34 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
         this.getItems().addAll(vBox);
     }
 
+    public static boolean isConnected() {
+        return isConnected.get();
+    }
+
+    public static boolean isConnectedProperty() {
+        return isConnected.get();
+    }
+
     public ListViewModelImport getListViewComponent(){
         return listViewModelImport;
     }
 
-    public void callWindowLogin(){
+    public static void callWindowLogin(String tableName){
         Login login = new Login(null);
         Optional<ButtonType> result = login.showAndWait();
 
         if(result.get() == ButtonType.OK){
             DaoFactory dao = null;
-            //Connection connection;
+            Connection connection = null;
             try {
                 login.config();
                 dao = DaoFactory.getInstance();
                 if(dao != null){
-                    this.connection = dao.getConnection();
-                    if(this.connection != null){
-                        this.isConnected.set(true);
-                        this.connection.close();
-                        showWindow(null);
+                    /*this.*/connection = dao.getConnection();
+                    if(/*this.*/connection != null){
+                        /*this.*/isConnected.set(true);
+                        /*this.*/connection.close();
+                        showWindow(tableName);
                     }
                 }
             } catch (ClassNotFoundException e) {
