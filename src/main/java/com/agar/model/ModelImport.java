@@ -23,4 +23,20 @@ public class ModelImport {
     }
 
     private Map<String, /*List*/Set<String>> model = new HashMap<>();
+
+    class Component{
+        private Map<String, /*List*/Set<String>> model = new HashMap<>();
+
+        public Component(Map<String, Set<String>> model) {
+            this.model = model;
+        }
+
+        public Map<String, Set<String>> getModel() {
+            return model;
+        }
+
+        public void setModel(Map<String, Set<String>> model) {
+            this.model = model;
+        }
+    }
 }

@@ -1,15 +1,13 @@
 package com.agar.data;
 
 import com.agar.model.Mapping;
-import com.agar.model.ModelImport;
 import com.google.gson.Gson;
-
 import java.io.*;
 import java.util.*;
-
 /**
  * Created by SDEV2 on 18/07/2016.
  */
+
 public class JsonMapping {
     private static JsonMapping jsonMapping = new JsonMapping();
     private static String jsonFileName;
@@ -21,12 +19,16 @@ public class JsonMapping {
         return jsonMapping;
     }
 
-    public boolean addMapping(String databaseName, Mapping.Component component) throws IOException {
+    public boolean addMapping(String databaseName, Mapping.Component component, boolean saveInJsonFile) throws IOException {
         Map<String, String> mapTable = component.getTable();
-        String key = null;
-        if(mapTable != null)
-            key = mapTable.keySet().stream().findFirst().get();
         Map<String, String> mapFields = component.getFields();
+        String tableKey = null;
+        BufferedWriter writer = null;
+        Gson gson = new Gson();
+
+        if(mapTable != null)
+            tableKey = mapTable.keySet().stream().findFirst().get();
+
         List<Mapping> mappings = getMappings();
         Mapping mapping_ = null;
 
@@ -37,8 +39,6 @@ public class JsonMapping {
             }
         }
 
-        BufferedWriter writer = null;
-        Gson gson = new Gson();
         Mapping mapping;
         if(mapping_ == null){
             mapping = new Mapping();
@@ -49,12 +49,34 @@ public class JsonMapping {
         else{
             if(mapTable != null){
                 for(Mapping.Component comp : mapping_.getComponents()){
-                    if(comp.getTable().containsKey(key))
-                        comp.getTable().replace(key, mapTable.get(key));
+                    if(comp.getTable().containsKey(tableKey))
+                        comp.getTable().replace(tableKey, mapTable.get(tableKey));
+                    else
+                        comp.getTable().put(tableKey, mapTable.get(tableKey));
+                }
+            }
+            if(mapFields != null){
+                for(Mapping.Component comp : mapping_.getComponents()){
+                    comp.getFields().forEach((s, s2) -> {
+                        if(mapFields.containsKey(s))
+                            comp.getFields().replace(s, s2);
+                        else
+                            comp.getFields().put(s, s2);
+                    });
                 }
             }
         }
-        return false;
+
+        if(saveInJsonFile){
+            try {
+                writer = new BufferedWriter(new FileWriter(jsonFileName));
+                writer.write(gson.toJson(mappings));
+            }
+            finally{
+                if(writer != null) writer.close();
+            }
+        }
+        return true;
     }
 
     public List<Mapping> getMappings() throws IOException {
@@ -84,6 +106,13 @@ public class JsonMapping {
         {
             throw e;
         }
+        mappings.forEach(mapping -> {
+            System.out.println("database: "+mapping.getDatabase());
+            mapping.getComponents().forEach(component -> {
+                component.getTable().forEach((s, s2) -> System.out.println("Table: "+ s+"->"+s2));
+                component.getFields().forEach((s, s2) -> System.out.println("Fields: "+ s+"->"+s2));
+            });
+        });
         return mappings;
     }
 }

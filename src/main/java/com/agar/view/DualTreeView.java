@@ -5,7 +5,10 @@ import com.agar.Invoker;
 import com.agar.Subject;
 import com.agar.Subscriber;
 import com.agar.dao.DatabaseTableDao;
+import com.agar.data.JsonMapping;
 import com.agar.data.JsonModelImport;
+import com.agar.factory.DaoFactory;
+import com.agar.model.Mapping;
 import com.agar.utils.Utils;
 import com.agar.view.alert.ExceptionHandler;
 import javafx.geometry.HPos;
@@ -29,6 +32,7 @@ public class DualTreeView extends GridPane implements Subject {
     private DatabaseTableDao dao;
     private List<Subscriber> subscribers = new ArrayList<>();
     private String selectedModel;
+    private DBTablesTree rightDBTablesTree;
 
     public DualTreeView(String tableName) throws SQLException, ClassNotFoundException {
         this.setPadding(new Insets(5));
@@ -47,10 +51,14 @@ public class DualTreeView extends GridPane implements Subject {
 
         this.getColumnConstraints().addAll(leftConstraint, middleConstraint, rightConstraint, afterRightConstraint);
         this.register(SplitPaneModelImport.getInstance());
-        init(tableName);
+        try {
+            init(tableName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void init(String tableName) throws SQLException, ClassNotFoundException {
+    public void init(String tableName) throws SQLException, ClassNotFoundException, IOException {
         Label candidateTablesLabel = new Label("Tables candidates");
         GridPane.setHalignment(candidateTablesLabel, HPos.CENTER);
         this.add(candidateTablesLabel, 0, 0);
@@ -79,7 +87,7 @@ public class DualTreeView extends GridPane implements Subject {
         this.add(vbox, 1, 1);
 
         TreeMap<String, Set<String>> emptyTreeMap = new TreeMap<>();
-        DBTablesTree rightDBTablesTree = new DBTablesTree(emptyTreeMap);
+        /*DBTablesTree*/ rightDBTablesTree = new DBTablesTree(emptyTreeMap);
         rightDBTablesTree.setStatus(DBTablesTree.Status.SELECTED);
         this.add(rightDBTablesTree, 2, 1);
 
@@ -111,22 +119,48 @@ public class DualTreeView extends GridPane implements Subject {
         Button okButton = new Button("Enregistrer");
         okButton.setPadding(new Insets(5, 50, 5, 50));
         okButton.setOnAction(event -> {
+            /**********Mardi 19 Juillet 2016 14h43*************/
+            Map<String, String> map = nestedGridPane.getMap();
+            String databaseName = DaoFactory.getDatabaseName();
+            Map<String, String> table = new HashMap<>();
+            Map<String, String> fields = new HashMap<>();
+            Mapping mapping = new Mapping();
+            String jsonFileName = "mapping.json";
+            JsonMapping jsonMapping = JsonMapping.getInstance(jsonFileName);
+            /**********************************************/
             rightDBTablesTree.getItems().forEach((s, strings) -> {
+                /**********Mardi 19 Juillet 2016 14h50*************/
+                table.clear();
+                fields.clear();
+                table.put(s, map.get(s));
+                /**********************************************/
                 strings.forEach(s1 -> {
                     try {
                         JsonModelImport.getInstance()
                                 .addModelImport(Utils.modelImportJsonFileName, s, s1);
+                        /**********Mardi 19 Juillet 2016 14h50*************/
+                        fields.put(s1, map.get(s1));
+                        /**********************************************/
                     } catch (IOException e) {
                         e.printStackTrace();
                         new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
                     }
                 });
+                /**********Mardi 19 Juillet 2016 15h00*************/
+                Mapping.Component component =  mapping.new Component(table, fields);
+                try {
+                    jsonMapping.addMapping(databaseName, component, true);
+                } catch (IOException e) {
+                    new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+                }
+                /***************************************************/
                 this.setValue(s);
                 /*Command cmd =Invoker.getInstance().getCommand(Utils.Cmd.ADD_MODEL_IMPORT);
                 if(cmd != null){
                     cmd.
                 }*/
             });
+
             Stage stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
             stage.close();
         });
@@ -188,11 +222,13 @@ public class DualTreeView extends GridPane implements Subject {
         Subject subject;
         Map<String, String> map = new HashMap<>();
         String oldValue, newValue;
+        List<Mapping> mappings = new ArrayList<>();
 
-        NestedGridPane(){
+        NestedGridPane() throws IOException {
             this.oldValueTextField = new TextField();
             this.oldValueTextField.setEditable(false);
             this.newValueTextField = new TextField();
+            getMappings();
             this.saveButton = new Button("Enregistrer");
 
             this.saveButton.setOnAction(event -> {
@@ -202,7 +238,6 @@ public class DualTreeView extends GridPane implements Subject {
                     this.map.replace(oldValue, newValue);
                 else
                     map.put(oldValue,newValue);
-                //((DBTablesTree)this.subject).getSelectionModel().clearSelection();
                 this.clear();
             });
 
@@ -214,6 +249,23 @@ public class DualTreeView extends GridPane implements Subject {
             this.setVgap(10);
             this.setHgap(10);
             this.setStyle("-fx-border-width: 1.0; -fx-border-color: gray;");
+        }
+
+        //TODO precisez la base de donnée dans le fichier modele-import.json
+        public void saveMapping(String oldValue, String newValue){
+            String databaseName = DaoFactory.getDatabaseName();
+            Mapping selectedMapping;
+            DualTreeView.this.rightDBTablesTree.getSelectedObservableMap();
+            /*for(Mapping mapping : this.mappings){
+                if(mapping.getDatabase().contentEquals(databaseName)){
+                    selectedMapping = mapping;
+                    for(Mapping.Component component : mapping.getComponents()){
+                        component.getTable().keySet().stream().
+                    }
+                    break;
+                }
+            }*/
+            //JsonMapping.getInstance(Utils.mappingJsonFileName).addMapping();
         }
 
         public void clear(){
@@ -230,6 +282,27 @@ public class DualTreeView extends GridPane implements Subject {
                 this.newValueTextField.setText(map.get(value));
             else
                 this.newValueTextField.clear();
+        }
+
+        public Map<String, String> getMap() {
+            return map;
+        }
+
+        public void setMap(Map<String, String> map) {
+            this.map = map;
+        }
+
+        public List<Mapping> getMappings() {
+            try {
+                this.mappings = JsonMapping.getInstance(Utils.mappingJsonFileName).getMappings();
+            } catch (IOException e) {
+                new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
+            }
+            return mappings;
+        }
+
+        public void setMappings(List<Mapping> mappings) {
+            this.mappings = mappings;
         }
     }
 }

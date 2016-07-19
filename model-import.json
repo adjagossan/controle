@@ -1,1 +1,1 @@
-[{"model":{"ChunkData":["SnapshotDataID","ChunkName","ChunkID","Version","Content","ChunkFlags","ChunkType","MimeType"]}},{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"dossier":["adresse","mail","ville"]}}]
+[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"ChunkData":["SnapshotDataID","ChunkName","ChunkID","Version","Content","ChunkFlags","ChunkType","MimeType"]}},{"model":{"dossier":["adresse","mail","ville"]}},{"model":{"TempDataSets":["ID","ItemID","LinkID","Name"]}}]

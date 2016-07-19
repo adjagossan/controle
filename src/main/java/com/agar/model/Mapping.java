@@ -38,6 +38,11 @@ public class Mapping {
         private Map<String, String> table = new HashMap<>();
         private Map<String, String> fields = new HashMap<>();
 
+        public Component(Map<String, String> table, Map<String, String> fields) {
+            this.table = table;
+            this.fields = fields;
+        }
+
         public Map<String, String> getTable() {
             return table;
         }

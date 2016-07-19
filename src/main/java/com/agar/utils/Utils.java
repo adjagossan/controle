@@ -16,6 +16,7 @@ public class Utils
 {
     public static final String modelImportJsonFileName = "model-import.json";
     public static final String constraintJsonFileName = "constraint.json";
+    public static final String mappingJsonFileName = "mapping.json";
 
     public static void configCommand(){
         /**

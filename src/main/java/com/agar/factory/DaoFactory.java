@@ -33,7 +33,6 @@ public class DaoFactory {
 
         try{
             BoneCPConfig config = new BoneCPConfig();
-            System.out.println("url :"+URL);
             config.setJdbcUrl(URL);
             config.setUsername(USERNAME);
             config.setPassword(PASSWORD);
@@ -117,7 +116,6 @@ public class DaoFactory {
     public static void setURL(String hostName, String databaseName) {
         //URL = "jdbc:mysql://"+hostName+":3306/"+databaseName+"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&profileSQL=false&useSSL=false";
         URL = "jdbc:sqlserver://"+hostName+";databaseName="+databaseName;
-        System.out.println("-> url :"+URL);
     }
 
     public Connection getConnection() throws SQLException {
