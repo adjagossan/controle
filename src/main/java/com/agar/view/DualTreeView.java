@@ -105,12 +105,26 @@ public class DualTreeView extends GridPane implements Subject {
             rightDBTablesTree.remove(rightDBTablesTree.getSelectedObservableMap());
             leftDBTablesTree.setItems(rightDBTablesTree.getSelectedObservableMap());
             rightDBTablesTree.getSelectedObservableMap().forEach((s, strings) -> {
-                if(nestedGridPane.map.containsKey(s))
+                for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
+                    if(dualTreeViewInfo.getMap().containsKey(s) && dualTreeViewInfo.getType() == DBTablesTree.Type.TABLE){
+                        nestedGridPane.infos.remove(dualTreeViewInfo);
+                        break;
+                    }
+                }
+                strings.forEach(s1 -> {
+                    for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
+                        if(dualTreeViewInfo.getMap().containsKey(s1) && dualTreeViewInfo.getType() == DBTablesTree.Type.FIELD){
+                            nestedGridPane.infos.remove(dualTreeViewInfo);
+                            break;
+                        }
+                    }
+                });
+               /* if(nestedGridPane.map.containsKey(s))
                     nestedGridPane.map.remove(s);
                 strings.forEach(s1 -> {
                     if(nestedGridPane.map.containsKey(s1))
                         nestedGridPane.map.remove(s1);
-                });
+                });*/
             });
             rightDBTablesTree.getSelectedObservableMap().clear();
             nestedGridPane.clear();
@@ -120,7 +134,8 @@ public class DualTreeView extends GridPane implements Subject {
         okButton.setPadding(new Insets(5, 50, 5, 50));
         okButton.setOnAction(event -> {
             /**********Mardi 19 Juillet 2016 14h43*************/
-            Map<String, String> map = nestedGridPane.getMap();
+            Map<String, String> map = null; //= nestedGridPane.getMap();
+            List<DualTreeView.Info> infos = nestedGridPane.getInfos();
             String databaseName = DaoFactory.getDatabaseName();
             Map<String, String> table = new HashMap<>();
             Map<String, String> fields = new HashMap<>();
@@ -132,14 +147,25 @@ public class DualTreeView extends GridPane implements Subject {
                 /**********Mardi 19 Juillet 2016 14h50*************/
                 table.clear();
                 fields.clear();
-                table.put(s, map.get(s));
+                for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
+                    if(dualTreeViewInfo.getMap().containsKey(s) && dualTreeViewInfo.getType() == DBTablesTree.Type.TABLE){
+                        table.put(s, dualTreeViewInfo.getMap().get(s));
+                        break;
+                    }
+                }
                 /**********************************************/
                 strings.forEach(s1 -> {
                     try {
                         JsonModelImport.getInstance()
                                 .addModelImport(Utils.modelImportJsonFileName, s, s1);
                         /**********Mardi 19 Juillet 2016 14h50*************/
-                        fields.put(s1, map.get(s1));
+                        for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
+                            if(dualTreeViewInfo.getMap().containsKey(s1) && dualTreeViewInfo.getType() == DBTablesTree.Type.FIELD){
+                                fields.put(s1, dualTreeViewInfo.getMap().get(s1));
+                                break;
+                            }
+                        }
+
                         /**********************************************/
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -220,7 +246,7 @@ public class DualTreeView extends GridPane implements Subject {
         TextField newValueTextField ;
         Button saveButton;
         Subject subject;
-        Map<String, String> map = new HashMap<>();
+        //Map<String, String> map = new HashMap<>();
         String oldValue, newValue;
         List<Mapping> mappings = new ArrayList<>();
         List<DualTreeView.Info> infos = new ArrayList<>();
@@ -235,10 +261,23 @@ public class DualTreeView extends GridPane implements Subject {
             this.saveButton.setOnAction(event -> {
                 oldValue = this.oldValueTextField.getText().toString();
                 newValue = this.newValueTextField.getText().toString();
-                if(this.map.containsKey(oldValue))
+                DBTablesTree.Info dbTablesTreeInfo = (DBTablesTree.Info)this.subject.getValue();
+                boolean found = false;
+                for(DualTreeView.Info info : infos){
+                    if(info.getType() == dbTablesTreeInfo.getType()){
+                        if(info.getMap().containsKey(dbTablesTreeInfo.getValue())){
+                            info.getMap().replace(oldValue, newValue);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(!found)
+                    infos.add(new DualTreeView.Info(oldValue, newValue, dbTablesTreeInfo.getType()));
+                /*if(this.map.containsKey(oldValue))
                     this.map.replace(oldValue, newValue);
                 else
-                    map.put(oldValue,newValue);
+                    map.put(oldValue,newValue);*/
                 this.clear();
             });
 
@@ -280,19 +319,32 @@ public class DualTreeView extends GridPane implements Subject {
             this.subject = subject;
             DBTablesTree.Info value = (DBTablesTree.Info) subject.getValue();
             this.oldValueTextField.setText(value.getValue());
-            if(map.containsKey(value))
+            boolean found = false;
+
+            for(Info info : infos){
+                if(info.getType() == value.getType()){
+                    if(info.getMap().containsKey(value.getValue())){
+                        this.newValueTextField.setText(info.getMap().get(value.getValue()));
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if(!found)
+                this.newValueTextField.clear();
+            /*if(map.containsKey(value))
                 this.newValueTextField.setText(map.get(value));
             else
-                this.newValueTextField.clear();
+                this.newValueTextField.clear();*/
         }
 
-        public Map<String, String> getMap() {
+       /* public Map<String, String> getMap() {
             return map;
         }
 
         public void setMap(Map<String, String> map) {
             this.map = map;
-        }
+        }*/
 
         public List<Mapping> getMappings() {
             try {
@@ -305,6 +357,14 @@ public class DualTreeView extends GridPane implements Subject {
 
         public void setMappings(List<Mapping> mappings) {
             this.mappings = mappings;
+        }
+
+        public List<Info> getInfos() {
+            return infos;
+        }
+
+        public void setInfos(List<Info> infos) {
+            this.infos = infos;
         }
     }
 

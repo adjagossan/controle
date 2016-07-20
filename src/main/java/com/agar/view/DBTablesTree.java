@@ -65,8 +65,14 @@ public class DBTablesTree extends TreeView<String> implements Subject {
 
         this.setOnMouseClicked(event -> {
                 if (this.getSelectionModel().getSelectedItem() != null) {
-                    if (this.getStatus() == Status.SELECTED)
-                        this.setValue(this.getSelectionModel().getSelectedItem().getValue());
+                    if (this.getStatus() == Status.SELECTED){
+                        Info info = new Info(this.getSelectionModel().getSelectedItem().getValue());
+                        if(this.getSelectionModel().getSelectedItem().getChildren().size() == 0)
+                            info.setType(Type.FIELD);
+                        else
+                            info.setType(Type.TABLE);
+                        this.setValue(info/*this.getSelectionModel().getSelectedItem().getValue()*/);
+                    }
                 }
         });
     }
@@ -173,6 +179,10 @@ public class DBTablesTree extends TreeView<String> implements Subject {
         public Info(String value, Type type) {
             this.value = value;
             this.type = type;
+        }
+
+        public Info(String value) {
+            this.value = value;
         }
 
         public String getValue() {

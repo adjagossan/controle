@@ -124,5 +124,6 @@ public class DaoFactory {
 
     public void shutDown(){
         this.connectionPool.shutdown();
+        DaoFactory.instance = null;
     }
 }

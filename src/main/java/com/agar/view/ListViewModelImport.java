@@ -67,9 +67,8 @@ public class ListViewModelImport extends ListView<String> implements Subject {
     public void init(String JsonFileName) throws IOException {
         try {
             for(ModelImport modelImport : JsonModelImport.getInstance().getModelImports(JsonFileName)) {
-                /*for(String modelName : modelImport.getModel().keySet())
-                    map.put(modelName, new SimpleBooleanProperty(false));*/
-                map.put(modelImport.getDatabaseName(), new SimpleBooleanProperty(false));
+                for(ModelImport.Component component : modelImport.getComponents())
+                    component.getModel().forEach((s, strings) ->  map.put(s, new SimpleBooleanProperty(false)));
             }
         } catch (IOException e) {
             e.printStackTrace();
