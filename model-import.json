@@ -1,1 +1,1 @@
-[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"ChunkData":["SnapshotDataID","ChunkName","ChunkID","Version","Content","ChunkFlags","ChunkType","MimeType"]}},{"model":{"dossier":["adresse","mail","ville"]}},{"model":{"TempDataSets":["ID","ItemID","LinkID","Name"]}}]
+[{"databaseName":"sakila","components":[{"model":{"patient":["nom","prenom","civilite"]}},{"model":{"dossier":["adresse","mail","ville"]}}]}]

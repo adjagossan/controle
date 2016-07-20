@@ -106,13 +106,7 @@ public class JsonMapping {
         {
             throw e;
         }
-        mappings.forEach(mapping -> {
-            System.out.println("database: "+mapping.getDatabase());
-            mapping.getComponents().forEach(component -> {
-                component.getTable().forEach((s, s2) -> System.out.println("Table: "+ s+"->"+s2));
-                component.getFields().forEach((s, s2) -> System.out.println("Fields: "+ s+"->"+s2));
-            });
-        });
+        System.out.println(gson.toJson(mappings));
         return mappings;
     }
 }

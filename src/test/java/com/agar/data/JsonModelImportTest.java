@@ -1,5 +1,6 @@
 package com.agar.data;
 
+import com.agar.factory.DaoFactory;
 import com.agar.utils.Utils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +21,7 @@ public class JsonModelImportTest
         List<String> fieldOne = Arrays.asList("nom", "prenom", "civilite");
         List<String> fieldTwo = Arrays.asList("adresse", "mail", "ville");
         List<List<String>> modelFields = Arrays.asList(fieldOne, fieldTwo);
+        DaoFactory.setDatabaseName("sakila");
         int i = 0;
 
         for(String modelImport: modelImports) {
@@ -37,7 +39,7 @@ public class JsonModelImportTest
     @Test
     public void getModelImportTest(){
         try {
-            JsonModelImport.getInstance().getInstance().getModelImports("model-import.json");
+            JsonModelImport.getInstance().getModelImports("model-import.json");
         } catch (IOException e) {
             e.printStackTrace();
         }

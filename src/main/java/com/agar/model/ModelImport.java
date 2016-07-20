@@ -7,28 +7,48 @@ import java.util.*;
  */
 public class ModelImport {
 
-    public ModelImport(String name) {
-        this.model.put(name, new HashSet/*ArrayList*/<>());
+    public ModelImport(String databaseName) {
+        this.databaseName = databaseName;
     }
 
     public ModelImport() {
     }
 
-    public Map<String, /*List*/Set<String>> getModel() {
-        return model;
+    private String databaseName;
+    private List<ModelImport.Component> components = new ArrayList<>();
+
+    public String getDatabaseName() {
+        return databaseName;
     }
 
-    public void setModel(Map<String, /*List*/Set<String>> model) {
-        this.model = model;
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
     }
 
-    private Map<String, /*List*/Set<String>> model = new HashMap<>();
+    public List<ModelImport.Component> getComponents() {
+        return components;
+    }
 
-    class Component{
-        private Map<String, /*List*/Set<String>> model = new HashMap<>();
+    public void setComponents(List<ModelImport.Component> components) {
+        this.components = components;
+    }
+
+    public void addComponent(ModelImport.Component component){
+        components.add(component);
+    }
+
+    public static class Component{
+        private Map<String, Set<String>> model = new HashMap<>();
 
         public Component(Map<String, Set<String>> model) {
             this.model = model;
+        }
+
+        public Component() {
+        }
+
+        public Component(String tableName){
+            model.put(tableName, new HashSet<>());
         }
 
         public Map<String, Set<String>> getModel() {

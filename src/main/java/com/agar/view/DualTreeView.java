@@ -223,6 +223,7 @@ public class DualTreeView extends GridPane implements Subject {
         Map<String, String> map = new HashMap<>();
         String oldValue, newValue;
         List<Mapping> mappings = new ArrayList<>();
+        List<DualTreeView.Info> infos = new ArrayList<>();
 
         NestedGridPane() throws IOException {
             this.oldValueTextField = new TextField();
@@ -256,6 +257,7 @@ public class DualTreeView extends GridPane implements Subject {
             String databaseName = DaoFactory.getDatabaseName();
             Mapping selectedMapping;
             DualTreeView.this.rightDBTablesTree.getSelectedObservableMap();
+
             /*for(Mapping mapping : this.mappings){
                 if(mapping.getDatabase().contentEquals(databaseName)){
                     selectedMapping = mapping;
@@ -276,8 +278,8 @@ public class DualTreeView extends GridPane implements Subject {
         @Override
         public void update(Subject subject){
             this.subject = subject;
-            String value = (String) subject.getValue();
-            this.oldValueTextField.setText(value);
+            DBTablesTree.Info value = (DBTablesTree.Info) subject.getValue();
+            this.oldValueTextField.setText(value.getValue());
             if(map.containsKey(value))
                 this.newValueTextField.setText(map.get(value));
             else
@@ -303,6 +305,34 @@ public class DualTreeView extends GridPane implements Subject {
 
         public void setMappings(List<Mapping> mappings) {
             this.mappings = mappings;
+        }
+    }
+
+    static class Info{
+        Map<String, String> map = new HashMap<>();
+        DBTablesTree.Type type;
+
+        Info(){}
+
+        Info(String oldValue, String newValue, DBTablesTree.Type type){
+            Info.this.map.put(oldValue, newValue);
+            Info.this.type = type;
+        }
+
+        public DBTablesTree.Type getType() {
+            return type;
+        }
+
+        public void setType(DBTablesTree.Type type) {
+            this.type = type;
+        }
+
+        public Map<String, String> getMap() {
+            return map;
+        }
+
+        public void setMap(Map<String, String> map) {
+            this.map = map;
         }
     }
 }

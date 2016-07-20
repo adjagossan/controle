@@ -2,6 +2,8 @@ package com.agar.data;
 
 import com.agar.Subject;
 import com.agar.Subscriber;
+import com.agar.factory.DaoFactory;
+import com.agar.model.Mapping;
 import com.agar.model.ModelImport;
 import com.agar.view.ListViewModelImport;
 import com.agar.view.alert.ExceptionHandler;
@@ -59,9 +61,21 @@ public class JsonModelImport implements Subject{
             e.printStackTrace();
             throw e;
         }
+        System.out.println(gson.toJson(modelImportList));
         return modelImportList;
     }
 
+    public void addDatabaseName(Set<ModelImport> modelImports, String databaseName){
+        boolean found = false;
+        for(ModelImport modelImport : modelImports){
+            if(modelImport.getDatabaseName().contentEquals(databaseName)) {
+                found = true;
+                break;
+            }
+        }
+        if(!found)
+            modelImports.add(new ModelImport(databaseName));
+    }
     /**
      *
      * @param JsonFileName
@@ -70,20 +84,21 @@ public class JsonModelImport implements Subject{
      * @return
      */
     public boolean addModelImport(String JsonFileName, String modelImportName, String field) throws IOException {
-        String modelImport = null;
-        if(modelImportName != null) modelImport = modelImportName.trim();
         BufferedWriter writer = null;
-        /*List*/Set<ModelImport> modelImportList/* = new ArrayList<>()*/;
+        Set<ModelImport> modelImportList/* = new ArrayList<>()*/;
+        String databaseName;
         Gson gson = new Gson();
 
         try {
             modelImportList = getModelImports(JsonFileName);
-
-            if(modelImport != null) {
-                if(!containsModel(modelImportList, modelImport, null))
-                    modelImportList.add(new ModelImport(modelImport));
+            databaseName = DaoFactory.getDatabaseName();
+            if(modelImportName != null && databaseName != null) {
+                addDatabaseName(modelImportList, databaseName);
+                /*if(!containsModel(modelImportList, modelImportName, null))
+                    modelImportList.add(new ModelImport(modelImportName));*/
+                containsModel(modelImportList, modelImportName, null);
                 if(field != null)
-                    containsModel(modelImportList, modelImport, field);
+                    containsModel(modelImportList, modelImportName, field);
             }
 
             try {
@@ -95,29 +110,51 @@ public class JsonModelImport implements Subject{
             }
         }
         catch(FileNotFoundException e) {
-            //logger.error(e.getMessage());
-            e.printStackTrace();
             throw e;
         }
         catch (IOException e) {
-            //logger.error(e.getMessage());
-            e.printStackTrace();
             throw e;
         }
-        /*
-        TODO
-        if(isAttached(ListViewModelImport.getInstance()))
-        */
+
         setValue(modelImportName);
         return true;
     }
 
-    private boolean containsModel(/*List*/Set<ModelImport> modelImportList, String modelImportName, String field)
+    private boolean containsModel(Set<ModelImport> modelImportList, String modelImportName, String field)
     {
         boolean found = false;
+        String databaseName;
+        ModelImport selectedModelImport = null;
+
         if(modelImportList !=null && !modelImportList.isEmpty()&& modelImportName != null)
         {
-            for (ModelImport model : modelImportList) {
+            /**************************************************************************/
+            databaseName = DaoFactory.getDatabaseName();
+            if(databaseName != null) {
+                for (ModelImport model : modelImportList) {
+                    if (model.getDatabaseName().contentEquals(databaseName)){
+                        selectedModelImport = model;
+                        break;
+                    }
+                }
+                if(selectedModelImport != null) {
+                    for (ModelImport.Component component : selectedModelImport.getComponents()) {
+                        for(String key : component.getModel().keySet()){
+                            if(key.contentEquals(modelImportName)){
+                                if (field != null)
+                                    component.getModel().get(key).add(field);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) break;
+                    }
+                    if(!found)
+                        selectedModelImport.getComponents().add(new ModelImport.Component(modelImportName));
+                }
+            }
+            /**************************************************************************/
+            /*for (ModelImport model : modelImportList) {
                 for (String key : model.getModel().keySet()) {
                     if (key.contentEquals(modelImportName)) {
                         if (field != null)
@@ -127,7 +164,7 @@ public class JsonModelImport implements Subject{
                     }
                 }
                 if (found) break;
-            }
+            }*/
         }
         return found;
     }

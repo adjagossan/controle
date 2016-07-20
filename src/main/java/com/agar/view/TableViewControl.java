@@ -5,6 +5,7 @@ import com.agar.Subject;
 import com.agar.Subscriber;
 import com.agar.data.JsonConstraint;
 import com.agar.data.JsonModelImport;
+import com.agar.factory.DaoFactory;
 import com.agar.model.Constraint;
 import com.agar.model.ModelImport;
 import com.agar.utils.Utils;
@@ -83,25 +84,49 @@ public class TableViewControl extends TableView<String> implements Subscriber
      */
     public void setItems(String modelImportName) throws IOException {
         long size = 0;
-        if(modelImportName != null)
+        String databaseName = DaoFactory.getDatabaseName();
+        ModelImport selectedModelImport = null;
+
+        if(modelImportName != null && databaseName != null)
         {
             loadData(this.modelImportJsonFileName, this.constraintJsonFileName);
             clear();
             boolean modelImportNameFound = false;
+
             for (ModelImport modelImport : listModelImport) {
-                for (String key : modelImport.getModel().keySet()) {
-                    if (key.contains(modelImportName)) {
-                        modelImportNameFound = true;
-                        size =  modelImport.getModel().get(modelImportName).stream().count();
-                        modelImport.getModel().get(modelImportName).stream()
-                                .forEach(item -> {
-                                    this.getItems().add(item);
-                                    map.put(item, new ArrayList<>());
-                                    listConstraint.forEach(constraint -> map.get(item).add(new SimpleBooleanProperty(false)));
-                                });
-                        break;
+                if(modelImport.getDatabaseName().contentEquals(databaseName)){
+                    selectedModelImport = modelImport;
+                }
+                if(selectedModelImport != null){
+                    for(ModelImport.Component component : selectedModelImport.getComponents()){
+                        for(String key : component.getModel().keySet()){
+                            if (key.contains(modelImportName)) {
+                                modelImportNameFound = true;
+                                size = component.getModel().get(modelImportName).stream().count();
+                                component.getModel().get(modelImportName).stream()
+                                        .forEach(item -> {
+                                            this.getItems().add(item);
+                                            map.put(item, new ArrayList<>());
+                                            listConstraint.forEach(constraint -> map.get(item).add(new SimpleBooleanProperty(false)));
+                                        });
+                                break;
+                            }
+                        }
                     }
                 }
+                    /*for (String key : modelImport.getModel().keySet()) {
+                        if (key.contains(modelImportName)) {
+                            modelImportNameFound = true;
+                            size = modelImport.getModel().get(modelImportName).stream().count();
+                            modelImport.getModel().get(modelImportName).stream()
+                                    .forEach(item -> {
+                                        this.getItems().add(item);
+                                        map.put(item, new ArrayList<>());
+                                        listConstraint.forEach(constraint -> map.get(item).add(new SimpleBooleanProperty(false)));
+                                    });
+                            break;
+                        }
+                    }*/
                 if (modelImportNameFound) break;
             }
             if(size > 0){

@@ -24,7 +24,7 @@ public class DBTablesTree extends TreeView<String> implements Subject {
     private CheckBoxTreeItem<String> superRootItem = new CheckBoxTreeItem<>(DaoFactory.getDatabaseName()+" (base de données)");
     private DBTablesTree.Status status = Status.CANDIDATE;
     private List<Subscriber> subscribers = new ArrayList<>();
-    private String value = null;
+    private Info value = null;
 
     public DBTablesTree(TreeMap<String, Set<String>> observableMap) throws SQLException, ClassNotFoundException {
         this.superRootItem.setExpanded(true);
@@ -147,7 +147,7 @@ public class DBTablesTree extends TreeView<String> implements Subject {
 
     @Override
     public void setValue(Object object) {
-        this.value = (String)object;
+        this.value = (Info) object;
         notifySubscribers();
     }
 
@@ -158,5 +158,37 @@ public class DBTablesTree extends TreeView<String> implements Subject {
 
     enum Status{
         CANDIDATE, SELECTED
+    }
+
+    enum Type{
+        TABLE, FIELD
+    }
+
+    static class Info{
+        String value;
+        Type type;
+
+        Info(){}
+
+        public Info(String value, Type type) {
+            this.value = value;
+            this.type = type;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public void setType(Type type) {
+            this.type = type;
+        }
     }
 }
