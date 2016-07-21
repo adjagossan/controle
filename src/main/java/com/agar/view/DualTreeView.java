@@ -31,7 +31,7 @@ import java.util.*;
 public class DualTreeView extends GridPane implements Subject {
     private DatabaseTableDao dao;
     private List<Subscriber> subscribers = new ArrayList<>();
-    private String selectedModel;
+    private /*String*/JsonModelImport.Info selectedModel;
     private DBTablesTree rightDBTablesTree;
 
     public DualTreeView(String tableName) throws SQLException, ClassNotFoundException {
@@ -184,7 +184,7 @@ public class DualTreeView extends GridPane implements Subject {
                     new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
                 }
                 /***************************************************/
-                this.setValue(s);
+                this.setValue(new JsonModelImport.Info(databaseName, s)/*s*/);
                 /*Command cmd =Invoker.getInstance().getCommand(Utils.Cmd.ADD_MODEL_IMPORT);
                 if(cmd != null){
                     cmd.
@@ -236,7 +236,7 @@ public class DualTreeView extends GridPane implements Subject {
 
     @Override
     public void setValue(Object object) {
-        this.selectedModel = (String)object;
+        this.selectedModel = (JsonModelImport.Info/*String*/)object;
         notifySubscribers();
     }
 

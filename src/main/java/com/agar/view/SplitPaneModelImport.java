@@ -2,6 +2,7 @@ package com.agar.view;
 
 import com.agar.Subject;
 import com.agar.Subscriber;
+import com.agar.data.JsonModelImport;
 import com.agar.factory.DaoFactory;
 import com.agar.view.alert.ExceptionHandler;
 import com.agar.view.alert.Login;
@@ -141,6 +142,6 @@ public class SplitPaneModelImport extends SplitPane implements Subscriber
 
     @Override
     public void update(Subject subject) throws IOException {
-        this.listViewModelImport.addItem((String) subject.getValue());
+        this.listViewModelImport.addItem((JsonModelImport.Info/*String*/) subject.getValue());
     }
 }

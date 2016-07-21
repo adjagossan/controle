@@ -116,7 +116,7 @@ public class JsonModelImport implements Subject{
             throw e;
         }
 
-        setValue(new Info(modelImportName, databaseName));
+        setValue(new Info(databaseName, modelImportName));
         return true;
     }
 

@@ -1,1 +1,1 @@
-[{"database":"ReportServerTempDB","components":[{"table":{"ChunkData":"chunck data"},"fields":{"MimeType":"Mime type"}},{"table":{"Segment":""},"fields":{"SegmentId":"segment id"}}]}]
+[{"database":"ReportServerTempDB","components":[{"table":{"ChunkData":""},"fields":{"MimeType":""}},{"table":{"Segment":"seg-ment"},"fields":{"SegmentId":"","Content":"con-tent"}}]}]

@@ -21,7 +21,8 @@ import java.util.*;
 public class ListViewModelImport extends ListView<String> implements Subject {
 
     private Map<String, ObservableValue<Boolean>> map = new /*HashMap*/TreeMap<>();
-    private String selectedModel = null;
+    private Map<ObservableValue<Boolean>, String> mMap = new HashMap<>();
+    private /*String*/ JsonModelImport.Info selectedModel = null;
     private static ListViewModelImport listViewModelImport;
 
     private ListViewModelImport(){}
@@ -57,7 +58,11 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         try {
             for(ModelImport modelImport : JsonModelImport.getInstance().getModelImports(JsonFileName)) {
                 for(ModelImport.Component component : modelImport.getComponents())
-                    component.getModel().forEach((s, strings) ->  map.put(s, new SimpleBooleanProperty(false)));
+                    component.getModel().forEach((s, strings) ->  {
+                        SimpleBooleanProperty property  = new SimpleBooleanProperty(false);
+                        map.put(s, property/*new SimpleBooleanProperty(false)*/);
+                        mMap.put(property, modelImport.getDatabaseName());
+                    });
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,22 +92,46 @@ public class ListViewModelImport extends ListView<String> implements Subject {
 
     private void uncheckTheOtherModel(String selectedModel)
     {
-        map.forEach((key, value) -> {if(!key.contentEquals(selectedModel))map.replace(key, value, new SimpleBooleanProperty(false));});
+        map.forEach((key, value) -> {
+            if(!key.contentEquals(selectedModel)){
+                SimpleBooleanProperty property = new SimpleBooleanProperty(false);
+                mMap.put(property, mMap.get(value));
+                map.replace(key, value, property/*new SimpleBooleanProperty(false)*/);//ici
+                mMap.remove(value);
+            }
+        });
         this.getItems().clear();
         refresh();
         this.getItems().addAll(map.keySet());
     }
 
-    public void addItem(String item){
-        this.map.put(item, new SimpleBooleanProperty(false));
-        this.map.get(item).addListener((observable, oldValue, newValue) -> {if(newValue)uncheckTheOtherModel(item);});
-        this.getItems().add(item);
+    public void addItem(JsonModelImport.Info/*String*/ item){
+        //this.map.put(/*item*/item.getTableName(), new SimpleBooleanProperty(false));
+        //this.map.get(/*item*/item.getTableName()).addListener((observable, oldValue, newValue) -> {if(newValue)uncheckTheOtherModel(/*item*/item.getTableName());});
+        //this.getItems().add(item);
+        boolean found = false;
+        for(String tableName : map.keySet()){
+            if(item.getTableName().contentEquals(tableName)){
+                if(mMap.get(map.get(tableName)).contentEquals(item.getDatabaseName())){
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if(!found){
+            SimpleBooleanProperty prop = new SimpleBooleanProperty(false);
+            this.mMap.put(prop, item.getDatabaseName());
+            this.map.put(item.getTableName(), prop);
+            prop.addListener((observable, oldValue, newValue) -> {if(newValue)uncheckTheOtherModel(/*item*/item.getTableName());});
+            this.getItems().add(item.getTableName());
+        }
     }
 
     public void refresh(){
         map.forEach((key, value) -> value.addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                this.setValue(key);
+                JsonModelImport.Info info = new JsonModelImport.Info(this.mMap.get(value), key);
+                this.setValue(/*key*/info);
                 this.setCheckedModel(key);
                 uncheckTheOtherModel(key);
             }
@@ -138,7 +167,7 @@ public class ListViewModelImport extends ListView<String> implements Subject {
 
     @Override
     public void setValue(Object object) {
-        this.selectedModel = (String)object;
+        this.selectedModel = (/*String*/ JsonModelImport.Info)object;
         notifySubscribers();
     }
 
