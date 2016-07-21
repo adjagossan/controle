@@ -2,6 +2,8 @@ package com.agar.data;
 
 import com.agar.model.Mapping;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 import java.util.*;
 /**
@@ -24,7 +26,7 @@ public class JsonMapping {
         Map<String, String> mapFields = component.getFields();
         String tableKey = null;
         BufferedWriter writer = null;
-        Gson gson = new Gson();
+        Gson gson = new /*Gson()*/GsonBuilder().serializeNulls().create();
 
         if(mapTable != null)
             tableKey = mapTable.keySet().stream().findFirst().get();
@@ -51,7 +53,8 @@ public class JsonMapping {
                 boolean foundTable = false;
                 for(Mapping.Component comp : mapping_.getComponents()){
                     if(comp.getTable().containsKey(tableKey)){
-                        comp.getTable().replace(tableKey, mapTable.get(tableKey));
+                        if(mapTable.get(tableKey) != null)
+                            comp.getTable().replace(tableKey, mapTable.get(tableKey));
                         foundTable = true;
                         break;
                     }

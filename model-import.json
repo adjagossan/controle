@@ -1,1 +1,0 @@
-[{"databaseName":"ReportServerTempDB","components":[{"model":{"ChunkData":["SnapshotDataID","ChunkName","ChunkID","Version","Content","ChunkFlags","ChunkType","MimeType"]}},{"model":{"Segment":["SegmentId","Content"]}}]}]

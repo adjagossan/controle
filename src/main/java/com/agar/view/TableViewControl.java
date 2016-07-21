@@ -1,14 +1,11 @@
 package com.agar.view;
 
-import com.agar.Invoker;
 import com.agar.Subject;
 import com.agar.Subscriber;
 import com.agar.data.JsonConstraint;
 import com.agar.data.JsonModelImport;
-import com.agar.factory.DaoFactory;
 import com.agar.model.Constraint;
 import com.agar.model.ModelImport;
-import com.agar.utils.Utils;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -31,26 +28,29 @@ public class TableViewControl extends TableView<String> implements Subscriber
     private TableColumn<String, Boolean> constraintColumn;
 
     /**
+     *
      * @param modelImportJsonFileName
      * @param constraintJsonFileName
-     * @param modelImportName
+     * @param info
+     * @throws IOException
      */
-    public TableViewControl(String modelImportJsonFileName,String constraintJsonFileName, String modelImportName) throws IOException {
+    public TableViewControl(String modelImportJsonFileName,String constraintJsonFileName, /*String modelImportName*/JsonModelImport.Info info) throws IOException {
+        JsonModelImport.getInstance().register(this);
         this.modelImportJsonFileName = Objects.requireNonNull(modelImportJsonFileName, "The Json file name can't be null");
         this.constraintJsonFileName = Objects.requireNonNull(constraintJsonFileName, "The Json file name can't be null");
         this.setEditable(true);
-        if( modelImportName == null)
+        if( /*modelImportName*/info == null)
             this.setVisible(false);
-        init(modelImportName);
+        //init(info/*modelImportName*/);
     }
 
     /**
-     * @param modelImportName
+     *
      * @throws IOException
      */
-    public void init(String modelImportName) throws IOException {
+    public void init(/*String modelImportName*/) throws IOException {
         JsonModelImport.getInstance().register(this);
-        setItems(modelImportName);
+        //setItems(modelImportName);
     }
 
     public void loadData(String modelImportJsonFileName,String constraintJsonFileName) throws IOException {
@@ -59,9 +59,6 @@ public class TableViewControl extends TableView<String> implements Subscriber
         //Invoker.getInstance().invoke(Utils.Cmd.GET_MODEL_IMPORT);
     }
 
-    /**
-     *
-     */
     public void addColumns(){
         TableColumn<String, String> fieldColumn = new TableColumn<>("");
         fieldColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
@@ -80,30 +77,32 @@ public class TableViewControl extends TableView<String> implements Subscriber
     }
 
     /**
-     * @param modelImportName
+     *
+     * @param info
+     * @throws IOException
      */
-    public void setItems(String modelImportName) throws IOException {
+    public void setItems(JsonModelImport.Info info /*String modelImportName*/) throws IOException {
         long size = 0;
-        String databaseName = DaoFactory.getDatabaseName();
+        //String databaseName = info.getDatabaseName()/*DaoFactory.getDatabaseName()*/;
         ModelImport selectedModelImport = null;
 
-        if(modelImportName != null /*&& databaseName != null*/)
+        if(/*modelImportName*//*info.getTableName()*/info != null /*&& databaseName != null*/)
         {
             loadData(this.modelImportJsonFileName, this.constraintJsonFileName);
             clear();
             boolean modelImportNameFound = false;
 
             for (ModelImport modelImport : listModelImport) {
-                if(modelImport.getDatabaseName().contentEquals(databaseName)){
+                if(modelImport.getDatabaseName().contentEquals(info.getDatabaseName()/*databaseName*/)){
                     selectedModelImport = modelImport;
                 }
                 if(selectedModelImport != null){
                     for(ModelImport.Component component : selectedModelImport.getComponents()){
                         for(String key : component.getModel().keySet()){
-                            if (key.contains(modelImportName)) {
+                            if (key.contains(/*modelImportName*/info.getTableName())) {
                                 modelImportNameFound = true;
-                                size = component.getModel().get(modelImportName).stream().count();
-                                component.getModel().get(modelImportName).stream()
+                                size = component.getModel().get(/*modelImportName*/info.getTableName()).stream().count();
+                                component.getModel().get(/*modelImportName*/info.getTableName()).stream()
                                         .forEach(item -> {
                                             this.getItems().add(item);
                                             map.put(item, new ArrayList<>());
@@ -114,19 +113,6 @@ public class TableViewControl extends TableView<String> implements Subscriber
                         }
                     }
                 }
-                    /*for (String key : modelImport.getModel().keySet()) {
-                        if (key.contains(modelImportName)) {
-                            modelImportNameFound = true;
-                            size = modelImport.getModel().get(modelImportName).stream().count();
-                            modelImport.getModel().get(modelImportName).stream()
-                                    .forEach(item -> {
-                                        this.getItems().add(item);
-                                        map.put(item, new ArrayList<>());
-                                        listConstraint.forEach(constraint -> map.get(item).add(new SimpleBooleanProperty(false)));
-                                    });
-                            break;
-                        }
-                    }*/
                 if (modelImportNameFound) break;
             }
             if(size > 0){
@@ -145,16 +131,12 @@ public class TableViewControl extends TableView<String> implements Subscriber
      */
     @Override
     public void update(Subject subject) throws IOException {
-        this.setItems(((JsonModelImport.Info) subject.getValue()).getTableName());
+        this.setItems(((JsonModelImport.Info) subject.getValue()));
     }
 
-    /**
-     *
-     */
     public void clear(){
         this.getItems().clear();
         this.map.clear();
         this.getColumns().clear();
     }
-
 }

@@ -53,7 +53,7 @@ public class MainScreen extends Application {
             TableViewControl tableViewControl = new TableViewControl(
                     Utils.modelImportJsonFileName,
                     Utils.constraintJsonFileName,
-                    (String)splitPaneModelImport.getListViewComponent().getValue());
+                    /*(String)splitPaneModelImport.getListViewComponent().getValue()*/null);
             tabControl.setContent(tableViewControl);
             splitPaneModelImport.getListViewComponent().register(tableViewControl);
         } catch (IOException e){

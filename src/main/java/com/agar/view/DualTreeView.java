@@ -31,7 +31,7 @@ import java.util.*;
 public class DualTreeView extends GridPane implements Subject {
     private DatabaseTableDao dao;
     private List<Subscriber> subscribers = new ArrayList<>();
-    private String selectedModel;
+    private /*String*/JsonModelImport.Info selectedModel;
     private DBTablesTree rightDBTablesTree;
 
     public DualTreeView(String tableName) throws SQLException, ClassNotFoundException {
@@ -156,7 +156,7 @@ public class DualTreeView extends GridPane implements Subject {
                     }
                 }
                 if(!foundTable)
-                    table.put(s, "");
+                    table.put(s, /*""*/null);
                 /**********************************************/
                 strings.forEach(s1 -> {
                     try {
@@ -184,7 +184,7 @@ public class DualTreeView extends GridPane implements Subject {
                     new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
                 }
                 /***************************************************/
-                this.setValue(s);
+                this.setValue(new JsonModelImport.Info(databaseName, s)/*s*/);
                 /*Command cmd =Invoker.getInstance().getCommand(Utils.Cmd.ADD_MODEL_IMPORT);
                 if(cmd != null){
                     cmd.
@@ -236,7 +236,7 @@ public class DualTreeView extends GridPane implements Subject {
 
     @Override
     public void setValue(Object object) {
-        this.selectedModel = (String)object;
+        this.selectedModel = (JsonModelImport.Info/*String*/)object;
         notifySubscribers();
     }
 
@@ -278,10 +278,6 @@ public class DualTreeView extends GridPane implements Subject {
                 }
                 if(!found)
                     infos.add(new DualTreeView.Info(oldValue, newValue, dbTablesTreeInfo.getType(), dbTablesTreeInfo.getParent()));
-                /*if(this.map.containsKey(oldValue))
-                    this.map.replace(oldValue, newValue);
-                else
-                    map.put(oldValue,newValue);*/
                 this.clear();
             });
 
@@ -293,24 +289,6 @@ public class DualTreeView extends GridPane implements Subject {
             this.setVgap(10);
             this.setHgap(10);
             this.setStyle("-fx-border-width: 1.0; -fx-border-color: gray;");
-        }
-
-        //TODO precisez la base de donnée dans le fichier modele-import.json
-        public void saveMapping(String oldValue, String newValue){
-            String databaseName = DaoFactory.getDatabaseName();
-            Mapping selectedMapping;
-            DualTreeView.this.rightDBTablesTree.getSelectedObservableMap();
-
-            /*for(Mapping mapping : this.mappings){
-                if(mapping.getDatabase().contentEquals(databaseName)){
-                    selectedMapping = mapping;
-                    for(Mapping.Component component : mapping.getComponents()){
-                        component.getTable().keySet().stream().
-                    }
-                    break;
-                }
-            }*/
-            //JsonMapping.getInstance(Utils.mappingJsonFileName).addMapping();
         }
 
         public void clear(){
@@ -336,23 +314,29 @@ public class DualTreeView extends GridPane implements Subject {
             }
             if(!found)
                 this.newValueTextField.clear();
-            /*if(map.containsKey(value))
-                this.newValueTextField.setText(map.get(value));
-            else
-                this.newValueTextField.clear();*/
         }
-
-       /* public Map<String, String> getMap() {
-            return map;
-        }
-
-        public void setMap(Map<String, String> map) {
-            this.map = map;
-        }*/
 
         public List<Mapping> getMappings() {
             try {
                 this.mappings = JsonMapping.getInstance(Utils.mappingJsonFileName).getMappings();
+                for(Mapping mapping : this.mappings){
+                    if(mapping.getDatabase().contentEquals(DaoFactory.getDatabaseName())){
+                        for(Mapping.Component compo : mapping.getComponents()){
+                            Map<String, String> table = compo.getTable();
+                            String oldValue = table.keySet().stream().findFirst().get();
+                            String newValue = table.get(oldValue);
+                            DualTreeView.Info info = new Info(oldValue, newValue, DBTablesTree.Type.TABLE, null);
+                            infos.add(info);
+
+                            Map<String, String> fields = compo.getFields();
+                            fields.forEach((s, s2) -> {
+                                DualTreeView.Info info1 = new Info(s, s2, DBTablesTree.Type.FIELD, oldValue);
+                                infos.add(info1);
+                            });
+                        }
+                        break;
+                    }
+                }
             } catch (IOException e) {
                 new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
             }
