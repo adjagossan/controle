@@ -4,26 +4,15 @@ import com.agar.Subject;
 import com.agar.Subscriber;
 import com.agar.data.JsonModelImport;
 import com.agar.model.ModelImport;
-import com.agar.utils.Utils;
-import com.agar.view.alert.ExceptionHandler;
-import com.agar.view.dialog.TextInputDialog;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -77,7 +66,6 @@ public class ListViewModelImport extends ListView<String> implements Subject {
         refresh();
         this.getItems().addAll(map.keySet());
         this.setCellFactory(CheckBoxListCell.forListView(item -> map.get(item)));
-
         contextMenuHandler();
     }
 
@@ -90,17 +78,6 @@ public class ListViewModelImport extends ListView<String> implements Subject {
                 SplitPaneModelImport.callWindowLogin(selectedModel);
             else
                 SplitPaneModelImport.showWindow(selectedModel);
-            //SplitPaneModelImport.showWindow(selectedModel);
-            /*new TextInputDialog(selectedModel, "Champ", "Entrez un nouveau champ")
-                    .showAndWait()
-                    .ifPresent(s -> {
-                        try {
-                            JsonModelImport.getInstance().addModelImport(Utils.modelImportJsonFileName, selectedModel, s);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            new ExceptionHandler(e, e.getMessage(), null, null).showAndWait();
-                        }
-                    });*/
         });
         contextMenu.getItems().add(addField);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {

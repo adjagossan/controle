@@ -139,7 +139,7 @@ public class DualTreeView extends GridPane implements Subject {
             String databaseName = DaoFactory.getDatabaseName();
             Map<String, String> table = new HashMap<>();
             Map<String, String> fields = new HashMap<>();
-            Mapping mapping = new Mapping();
+            //Mapping mapping = new Mapping();
             String jsonFileName = "mapping.json";
             JsonMapping jsonMapping = JsonMapping.getInstance(jsonFileName);
             /**********************************************/
@@ -147,12 +147,16 @@ public class DualTreeView extends GridPane implements Subject {
                 /**********Mardi 19 Juillet 2016 14h50*************/
                 table.clear();
                 fields.clear();
+                boolean foundTable = false;
                 for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
                     if(dualTreeViewInfo.getMap().containsKey(s) && dualTreeViewInfo.getType() == DBTablesTree.Type.TABLE){
                         table.put(s, dualTreeViewInfo.getMap().get(s));
+                        foundTable = true;
                         break;
                     }
                 }
+                if(!foundTable)
+                    table.put(s, "");
                 /**********************************************/
                 strings.forEach(s1 -> {
                     try {
@@ -160,7 +164,7 @@ public class DualTreeView extends GridPane implements Subject {
                                 .addModelImport(Utils.modelImportJsonFileName, s, s1);
                         /**********Mardi 19 Juillet 2016 14h50*************/
                         for(DualTreeView.Info dualTreeViewInfo : nestedGridPane.infos){
-                            if(dualTreeViewInfo.getMap().containsKey(s1) && dualTreeViewInfo.getType() == DBTablesTree.Type.FIELD){
+                            if(dualTreeViewInfo.getMap().containsKey(s1) && dualTreeViewInfo.getType() == DBTablesTree.Type.FIELD && dualTreeViewInfo.getParent().contentEquals(s)){
                                 fields.put(s1, dualTreeViewInfo.getMap().get(s1));
                                 break;
                             }
@@ -173,7 +177,7 @@ public class DualTreeView extends GridPane implements Subject {
                     }
                 });
                 /**********Mardi 19 Juillet 2016 15h00*************/
-                Mapping.Component component =  mapping.new Component(table, fields);
+                Mapping.Component component =  /*mapping.new Component(table, fields);*/ new Mapping.Component(table, fields);
                 try {
                     jsonMapping.addMapping(databaseName, component, true);
                 } catch (IOException e) {
@@ -273,7 +277,7 @@ public class DualTreeView extends GridPane implements Subject {
                     }
                 }
                 if(!found)
-                    infos.add(new DualTreeView.Info(oldValue, newValue, dbTablesTreeInfo.getType()));
+                    infos.add(new DualTreeView.Info(oldValue, newValue, dbTablesTreeInfo.getType(), dbTablesTreeInfo.getParent()));
                 /*if(this.map.containsKey(oldValue))
                     this.map.replace(oldValue, newValue);
                 else
@@ -371,12 +375,19 @@ public class DualTreeView extends GridPane implements Subject {
     static class Info{
         Map<String, String> map = new HashMap<>();
         DBTablesTree.Type type;
+        String parent;
 
         Info(){}
 
         Info(String oldValue, String newValue, DBTablesTree.Type type){
             Info.this.map.put(oldValue, newValue);
             Info.this.type = type;
+        }
+
+        Info(String oldValue, String newValue, DBTablesTree.Type type, String parent){
+            Info.this.map.put(oldValue, newValue);
+            Info.this.type = type;
+            Info.this.parent = parent;
         }
 
         public DBTablesTree.Type getType() {
@@ -393,6 +404,14 @@ public class DualTreeView extends GridPane implements Subject {
 
         public void setMap(Map<String, String> map) {
             this.map = map;
+        }
+
+        public String getParent() {
+            return parent;
+        }
+
+        public void setParent(String parent) {
+            this.parent = parent;
         }
     }
 }

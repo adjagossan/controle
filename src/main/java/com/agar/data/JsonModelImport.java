@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class JsonModelImport implements Subject{
     //private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(JsonModelImport.class);
     private List<Subscriber> subscribers = new ArrayList<>();
-    private String selectedModel;
+    private /*String*/Info selectedModel;
     private static JsonModelImport jsonModelImport = new JsonModelImport();
 
     private JsonModelImport(){}
@@ -116,7 +116,7 @@ public class JsonModelImport implements Subject{
             throw e;
         }
 
-        setValue(modelImportName);
+        setValue(new Info(modelImportName, databaseName));
         return true;
     }
 
@@ -198,12 +198,40 @@ public class JsonModelImport implements Subject{
 
     @Override
     public void setValue(Object object) {
-        selectedModel = (String)object;
+        selectedModel = (JsonModelImport.Info)object;
         notifySubscribers();
     }
 
     @Override
     public Object getValue() {
         return this.selectedModel;
+    }
+
+    public static class Info{
+        String databaseName;
+        String tableName;
+
+        public Info(String databaseName, String tableName){
+            Info.this.databaseName = databaseName;
+            Info.this.tableName = tableName;
+        }
+
+        public Info(){}
+
+        public String getDatabaseName() {
+            return databaseName;
+        }
+
+        public void setDatabaseName(String databaseName) {
+            this.databaseName = databaseName;
+        }
+
+        public String getTableName() {
+            return tableName;
+        }
+
+        public void setTableName(String tableName) {
+            this.tableName = tableName;
+        }
     }
 }

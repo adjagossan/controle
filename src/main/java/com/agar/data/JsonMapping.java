@@ -48,21 +48,39 @@ public class JsonMapping {
         }
         else{
             if(mapTable != null){
+                boolean foundTable = false;
                 for(Mapping.Component comp : mapping_.getComponents()){
-                    if(comp.getTable().containsKey(tableKey))
+                    if(comp.getTable().containsKey(tableKey)){
                         comp.getTable().replace(tableKey, mapTable.get(tableKey));
-                    else
-                        comp.getTable().put(tableKey, mapTable.get(tableKey));
+                        foundTable = true;
+                        break;
+                    }
+                    //else
+                     //   comp.getTable().put(tableKey, mapTable.get(tableKey));
+                }
+                if(!foundTable){
+                    Mapping.Component comp = new Mapping.Component();
+                    comp.addTable(mapTable);
+                    mapping_.addComponent(comp);
                 }
             }
             if(mapFields != null){
                 for(Mapping.Component comp : mapping_.getComponents()){
-                    comp.getFields().forEach((s, s2) -> {
-                        if(mapFields.containsKey(s))
-                            comp.getFields().replace(s, s2);
-                        else
-                            comp.getFields().put(s, s2);
-                    });
+                    String tableName = comp.getTable().keySet().stream().findFirst().get();
+                    if(tableName.contentEquals(tableKey)){
+                        /*comp.getFields().forEach((s, s2) -> {
+                            if(mapFields.containsKey(s))
+                                comp.getFields().replace(s, s2);
+                            else
+                                comp.getFields().put(s, s2);
+                        });*/
+                        mapFields.forEach((s, s2) -> {
+                            if(comp.getFields().containsKey(s))
+                                comp.getFields().replace(s, s2);
+                            else
+                                comp.getFields().put(s, s2);
+                        });
+                    }
                 }
             }
         }

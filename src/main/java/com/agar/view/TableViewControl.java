@@ -87,7 +87,7 @@ public class TableViewControl extends TableView<String> implements Subscriber
         String databaseName = DaoFactory.getDatabaseName();
         ModelImport selectedModelImport = null;
 
-        if(modelImportName != null && databaseName != null)
+        if(modelImportName != null /*&& databaseName != null*/)
         {
             loadData(this.modelImportJsonFileName, this.constraintJsonFileName);
             clear();
@@ -145,7 +145,7 @@ public class TableViewControl extends TableView<String> implements Subscriber
      */
     @Override
     public void update(Subject subject) throws IOException {
-        this.setItems((String) subject.getValue());
+        this.setItems(((JsonModelImport.Info) subject.getValue()).getTableName());
     }
 
     /**

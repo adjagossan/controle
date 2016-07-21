@@ -34,13 +34,27 @@ public class Mapping {
         this.components = components;
     }
 
-    public class Component{
+    public static class Component{
         private Map<String, String> table = new HashMap<>();
         private Map<String, String> fields = new HashMap<>();
 
         public Component(Map<String, String> table, Map<String, String> fields) {
             this.table = table;
             this.fields = fields;
+        }
+
+        public Component(){}
+
+        public Component(Map<String, String> table) {
+            this.table = table;
+        }
+
+        public void addTable(Map<String, String> table){
+            this.table.putAll(table);
+        }
+
+        public void addFields(Map<String, String> fields){
+            this.fields.putAll(fields);
         }
 
         public Map<String, String> getTable() {

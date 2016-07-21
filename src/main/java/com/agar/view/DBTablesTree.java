@@ -67,11 +67,13 @@ public class DBTablesTree extends TreeView<String> implements Subject {
                 if (this.getSelectionModel().getSelectedItem() != null) {
                     if (this.getStatus() == Status.SELECTED){
                         Info info = new Info(this.getSelectionModel().getSelectedItem().getValue());
-                        if(this.getSelectionModel().getSelectedItem().getChildren().size() == 0)
+                        if(this.getSelectionModel().getSelectedItem().getChildren().size() == 0) {
                             info.setType(Type.FIELD);
-                        else
+                            info.setParent(this.getSelectionModel().getSelectedItem().getParent().getValue());
+                        }else {
                             info.setType(Type.TABLE);
-                        this.setValue(info/*this.getSelectionModel().getSelectedItem().getValue()*/);
+                            info.setParent(null);
+                        }this.setValue(info/*this.getSelectionModel().getSelectedItem().getValue()*/);
                     }
                 }
         });
@@ -173,6 +175,7 @@ public class DBTablesTree extends TreeView<String> implements Subject {
     static class Info{
         String value;
         Type type;
+        String parent;
 
         Info(){}
 
@@ -183,6 +186,12 @@ public class DBTablesTree extends TreeView<String> implements Subject {
 
         public Info(String value) {
             this.value = value;
+        }
+
+        public Info(String value, Type type, String parent) {
+            this.value = value;
+            this.type = type;
+            this.parent = parent;
         }
 
         public String getValue() {
@@ -199,6 +208,14 @@ public class DBTablesTree extends TreeView<String> implements Subject {
 
         public void setType(Type type) {
             this.type = type;
+        }
+
+        public String getParent() {
+            return parent;
+        }
+
+        public void setParent(String parent) {
+            this.parent = parent;
         }
     }
 }
